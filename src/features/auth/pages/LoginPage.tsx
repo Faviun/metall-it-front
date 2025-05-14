@@ -1,11 +1,13 @@
 import { useAuth } from "../../../context/AuthContext";
 import LoginForm from "../components/LoginForm";
+import $api from "../../../api/axios";
 
 const LoginPage = () => {
   const { login } = useAuth();
 
   const handleLogin = () => {
-    login(); // Здесь вместо реального запроса просто активируем сессию
+    // login(); // Здесь вместо реального запроса просто активируем сессию
+    $api.get("");
   };
 
   return (
