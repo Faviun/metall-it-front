@@ -8,9 +8,9 @@ interface RegisterData {
 export const registerUser = async (data: RegisterData) => {
   try {
     const response = await axios.post("/api/register", data);
-    return response.data; // или можно вернуть полный ответ, если нужно
+    return response.data; 
   } catch (error) {
     console.error("Ошибка регистрации:", error);
-    throw error; // обработка ошибок
+    throw error;
   }
 };
