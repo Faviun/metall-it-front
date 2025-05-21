@@ -16,16 +16,65 @@ function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-sm w-full mx-auto space-y-4">
-      <Typography variant="h4">Регистрация</Typography>
-      <Input label="Email" name="email" value={formData.email} onChange={handleChange} />
-      <Input type="password" label="Пароль" name="password" value={formData.password} onChange={handleChange} />
-      <Button type="submit" className="bg-blue-gray-600" fullWidth>
+      <Typography
+        variant="h4"
+        placeholder={undefined}
+        onResize={undefined}
+        onResizeCapture={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      >
+        Регистрация
+      </Typography>
+      <Input
+        label="Email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        onResize={undefined}
+        onResizeCapture={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+        crossOrigin={undefined}
+      />
+      <Input
+        type="password"
+        label="Пароль"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+        onResize={undefined}
+        onResizeCapture={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+        crossOrigin={undefined}
+      />
+      <Button
+        type="submit"
+        className="bg-blue-gray-600"
+        fullWidth
+        placeholder={undefined}
+        onResize={undefined}
+        onResizeCapture={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      >
         Зарегистрироваться
       </Button>
 
       <div className="mt-4 text-center">
-        <Typography variant="small">
-          Уже есть аккаунт? <Link to="/login" className="text-blue-500">Войти</Link>
+        <Typography
+          variant="small"
+          placeholder={undefined}
+          onResize={undefined}
+          onResizeCapture={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        >
+          Уже есть аккаунт?{" "}
+          <Link to="/login" className="text-blue-500">
+            Войти
+          </Link>
         </Typography>
       </div>
     </form>
@@ -33,7 +82,6 @@ function RegisterForm() {
 }
 
 export default RegisterForm;
-
 
 // import { Link } from "react-router-dom";
 // import { Input, Button, Typography } from "@material-tailwind/react";
@@ -59,7 +107,7 @@ export default RegisterForm;
 //       <Typography variant="h4" className="text-center text-blue-gray-700">
 //         Регистрация
 //       </Typography>
-      
+
 //       <Input
 //         label="Email"
 //         name="email"
@@ -67,7 +115,7 @@ export default RegisterForm;
 //         onChange={handleChange}
 //         className="bg-blue-gray-50"
 //       />
-      
+
 //       <Input
 //         type="password"
 //         label="Пароль"

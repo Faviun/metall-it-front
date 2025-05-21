@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Input, Button, Typography } from "@material-tailwind/react";
-import { login } from "../api/login";
+// import { login } from "../api/login";
 import type { LoginData } from "../types/auth";
 import $api from "../../../api/axios";
 
@@ -30,6 +30,11 @@ export default function LoginForm() {
         variant="h4"
         as="h4"
         className="text-blue-gray-800 text-center mb-6"
+        placeholder={undefined}
+        onResize={undefined}
+        onResizeCapture={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
       >
         Вход
       </Typography>
@@ -40,6 +45,11 @@ export default function LoginForm() {
           value={formData.email}
           onChange={handleChange}
           className="text-blue-gray-900"
+          onResize={undefined}
+          onResizeCapture={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+          crossOrigin={undefined}
         />
       </div>
       <div>
@@ -50,9 +60,24 @@ export default function LoginForm() {
           value={formData.password}
           onChange={handleChange}
           className="text-blue-gray-900"
+          onResize={undefined}
+          onResizeCapture={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+          crossOrigin={undefined}
         />
       </div>
-      <Button type="submit" fullWidth color="blue-gray" className="mt-4">
+      <Button
+        type="submit"
+        fullWidth
+        color="blue-gray"
+        className="mt-4"
+        placeholder={undefined}
+        onResize={undefined}
+        onResizeCapture={undefined}
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      >
         Войти
       </Button>
     </form>

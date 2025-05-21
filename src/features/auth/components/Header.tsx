@@ -17,7 +17,15 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
       <div className="container mx-auto flex items-center justify-between gap-x-6">
         {/* Логотип */}
         <Link to="/">
-          <Typography variant="h5" className="text-blue-700 whitespace-nowrap">
+          <Typography
+            variant="h5"
+            className="text-blue-700 whitespace-nowrap"
+            placeholder={undefined}
+            onResize={undefined}
+            onResizeCapture={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          >
             МеталлМаркет
           </Typography>
         </Link>
@@ -30,6 +38,11 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
               variant="outlined"
               size="sm"
               className="h-10 border-blue-gray-300 text-blue-gray-700 hover:bg-blue-gray-200"
+              placeholder={undefined}
+              onResize={undefined}
+              onResizeCapture={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Каталог
             </Button>
@@ -77,6 +90,11 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
               variant="outlined"
               size="sm"
               className="h-10 border-blue-gray-300 text-blue-gray-700 hover:bg-blue-gray-200"
+              placeholder={undefined}
+              onResize={undefined}
+              onResizeCapture={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Заказы
             </Button>
@@ -88,6 +106,11 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
               variant="outlined"
               size="sm"
               className="h-10 border-blue-gray-300 text-blue-gray-700 hover:bg-blue-gray-200 flex items-center gap-1 relative"
+              placeholder={undefined}
+              onResize={undefined}
+              onResizeCapture={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
             >
               Корзина
               {items.length > 0 && (
@@ -97,7 +120,6 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
               )}
             </Button>
           </Link>
-
         </div>
 
         {/* Авторизация / Профиль */}
@@ -109,6 +131,11 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
                   variant="text"
                   size="sm"
                   className="h-10 border-blue-gray-300 text-blue-gray-700 hover:bg-blue-gray-200"
+                  placeholder={undefined}
+                  onResize={undefined}
+                  onResizeCapture={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Профиль
                 </Button>
@@ -118,6 +145,11 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
                 size="sm"
                 onClick={logout}
                 className="h-10 border-blue-gray-300 text-blue-gray-700 hover:bg-blue-gray-200"
+                placeholder={undefined}
+                onResize={undefined}
+                onResizeCapture={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
               >
                 Выйти
               </Button>
@@ -129,6 +161,11 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
                   variant="outlined"
                   size="sm"
                   className="h-10 border-blue-gray-300 text-blue-gray-700 hover:bg-blue-gray-200"
+                  placeholder={undefined}
+                  onResize={undefined}
+                  onResizeCapture={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Вход
                 </Button>
@@ -138,6 +175,11 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
                   variant="outlined"
                   size="sm"
                   className="h-10 border-blue-gray-300 text-blue-gray-700 hover:bg-blue-gray-200"
+                  placeholder={undefined}
+                  onResize={undefined}
+                  onResizeCapture={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Регистрация
                 </Button>
@@ -147,8 +189,6 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
         </div>
       </div>
     </header>
-
-
   );
 }
 

@@ -1,5 +1,3 @@
-import React from "react";
-
 const Footer = () => {
   return (
     <footer className="w-full bg-blue-gray-600 text-white py-6 mt-auto">
@@ -9,31 +7,29 @@ const Footer = () => {
           <p className="text-sm">Ваш надежный поставщик металлопроката</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 text-center sm:text-left">
-          <a href="/about" className="text-white hover:text-gray-400">О нас</a>
-          <a href="/contact" className="text-white hover:text-gray-400">Контакты</a>
-          <a href="/privacy" className="text-white hover:text-gray-400">Политика конфиденциальности</a>
+          <a href="/about" className="text-white hover:text-gray-400">
+            О нас
+          </a>
+          <a href="/contact" className="text-white hover:text-gray-400">
+            Контакты
+          </a>
+          <a href="/privacy" className="text-white hover:text-gray-400">
+            Политика конфиденциальности
+          </a>
         </div>
       </div>
       <div className="mt-2 pt-2 text-center text-sm">
-      {/* <div className="border-t border-gray-700 mt-2 pt-2 text-center text-sm"> */}
+        {/* <div className="border-t border-gray-700 mt-2 pt-2 text-center text-sm"> */}
 
-        <p>&copy; {new Date().getFullYear()} МеталлМаркет. Все права защищены.</p>
+        <p>
+          &copy; {new Date().getFullYear()} МеталлМаркет. Все права защищены.
+        </p>
       </div>
     </footer>
   );
 };
 
 export default Footer;
-
-
-
-
-
-
-
-
-
-
 
 // import React from "react";
 

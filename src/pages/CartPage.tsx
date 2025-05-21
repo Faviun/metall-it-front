@@ -1,81 +1,106 @@
-import React, { useState, useEffect } from 'react';
-import { useCart } from '../context/CartContext';
-import { Button, Checkbox } from '@material-tailwind/react';
-import type { CartItem } from '../context/CartContext';
+import React, { useState, useEffect } from "react";
+import { useCart } from "../context/CartContext";
+import { Button, Checkbox } from "@material-tailwind/react";
+import type { CartItem } from "../context/CartContext";
 
 const CartPage = () => {
-  const { items, removeFromCart, updateQuantity, clearCart, selectSupplierForItem } = useCart();
+  const {
+    items,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    selectSupplierForItem,
+  } = useCart();
 
-  const [quantityInputs, setQuantityInputs] = useState<{[key: number]: string}>({});
+  const [quantityInputs, setQuantityInputs] = useState<{
+    [key: number]: string;
+  }>({});
 
   useEffect(() => {
-    const initialInputs: {[key: number]: string} = {};
-    items.forEach(item => {
-      initialInputs[item.id] = item.quantity.toFixed(4).replace(/\.?0+$/, '').replace(/\./g, ',');
+    const initialInputs: { [key: number]: string } = {};
+    items.forEach((item) => {
+      initialInputs[item.id] = item.quantity
+        .toFixed(4)
+        .replace(/\.?0+$/, "")
+        .replace(/\./g, ",");
     });
     setQuantityInputs(initialInputs);
   }, [items]);
 
-  const handleQuantityInputChange = (productId: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleQuantityInputChange = (
+    productId: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     let value = e.target.value;
-    value = value.replace(/,/g, '.');
+    value = value.replace(/,/g, ".");
 
-    if (value === '' || value === '.' || value.endsWith('.')) {
-      setQuantityInputs(prev => ({ ...prev, [productId]: value }));
+    if (value === "" || value === "." || value.endsWith(".")) {
+      setQuantityInputs((prev) => ({ ...prev, [productId]: value }));
       return;
     }
 
     const isValid = /^\d*\.?\d{0,4}$/.test(value);
 
     if (isValid) {
-      setQuantityInputs(prev => ({ ...prev, [productId]: value }));
+      setQuantityInputs((prev) => ({ ...prev, [productId]: value }));
     }
   };
 
   const handleQuantityInputBlur = (productId: number) => {
-    let rawValue = quantityInputs[productId];
-    let finalValue = parseFloat(rawValue.replace(/,/g, '.'));
+    const rawValue = quantityInputs[productId];
+    let finalValue = parseFloat(rawValue.replace(/,/g, "."));
     if (isNaN(finalValue) || finalValue <= 0) {
-        finalValue = 0.0001;
+      finalValue = 0.0001;
     }
     finalValue = parseFloat(finalValue.toFixed(4));
     updateQuantity(productId, finalValue);
-    setQuantityInputs(prev => ({ ...prev, [productId]: finalValue.toString().replace(/\./g, ',') }));
+    setQuantityInputs((prev) => ({
+      ...prev,
+      [productId]: finalValue.toString().replace(/\./g, ","),
+    }));
   };
 
-
   const handleIncrement = (productId: number) => {
-    let currentQuantity = parseFloat((quantityInputs[productId] || '0').replace(/,/g, '.'));
+    let currentQuantity = parseFloat(
+      (quantityInputs[productId] || "0").replace(/,/g, ".")
+    );
     if (isNaN(currentQuantity)) {
       currentQuantity = 0;
     }
     const newQuantity = parseFloat((currentQuantity + 1).toFixed(4));
     updateQuantity(productId, newQuantity);
-    setQuantityInputs(prev => ({ ...prev, [productId]: newQuantity.toString().replace(/\./g, ',') }));
+    setQuantityInputs((prev) => ({
+      ...prev,
+      [productId]: newQuantity.toString().replace(/\./g, ","),
+    }));
   };
 
   const handleDecrement = (productId: number) => {
-    let currentQuantity = parseFloat((quantityInputs[productId] || '0').replace(/,/g, '.'));
+    let currentQuantity = parseFloat(
+      (quantityInputs[productId] || "0").replace(/,/g, ".")
+    );
     if (isNaN(currentQuantity)) {
       currentQuantity = 0;
     }
     const newQuantity = parseFloat((currentQuantity - 1).toFixed(4));
     if (newQuantity >= 0.0001) {
       updateQuantity(productId, newQuantity);
-      setQuantityInputs(prev => ({ ...prev, [productId]: newQuantity.toString().replace(/\./g, ',') }));
+      setQuantityInputs((prev) => ({
+        ...prev,
+        [productId]: newQuantity.toString().replace(/\./g, ","),
+      }));
     } else {
       updateQuantity(productId, 0.0001);
-      setQuantityInputs(prev => ({ ...prev, [productId]: '0,0001' }));
+      setQuantityInputs((prev) => ({ ...prev, [productId]: "0,0001" }));
     }
   };
-
 
   const handleRemoveFromCart = (productId: number) => {
     removeFromCart(productId);
   };
 
   const handleSupplierSelection = (itemId: number, supplierName: string) => {
-    const item = items.find(i => i.id === itemId);
+    const item = items.find((i) => i.id === itemId);
     if (item && item.selectedSupplierName === supplierName) {
       selectSupplierForItem(itemId, undefined);
     } else {
@@ -95,13 +120,17 @@ const CartPage = () => {
 
   const uniqueSuppliers = Array.from(
     new Set(
-      items.flatMap((item) => (item.availableSuppliers || []).map((s) => s.name))
+      items.flatMap((item) =>
+        (item.availableSuppliers || []).map((s) => s.name)
+      )
     )
   );
 
   const calculateSupplierTotal = (supplierName: string) => {
     return items.reduce((total, item) => {
-      const supplier = (item.availableSuppliers || []).find((s) => s.name === supplierName);
+      const supplier = (item.availableSuppliers || []).find(
+        (s) => s.name === supplierName
+      );
       // Учитываем только тех поставщиков, которые выбраны для товара
       if (supplier && item.selectedSupplierName === supplierName) {
         return total + supplier.price * item.quantity;
@@ -110,10 +139,17 @@ const CartPage = () => {
     }, 0);
   };
 
-  const grandTotal = items.reduce((total, item) => total + calculateItemTotal(item), 0);
+  const grandTotal = items.reduce(
+    (total, item) => total + calculateItemTotal(item),
+    0
+  );
 
   // Проверяем, можно ли оформить заказ (все товары должны иметь выбранного поставщика)
-  const canProceedToCheckout = items.every(item => item.selectedSupplierName !== undefined && item.selectedSupplierName !== null);
+  const canProceedToCheckout = items.every(
+    (item) =>
+      item.selectedSupplierName !== undefined &&
+      item.selectedSupplierName !== null
+  );
 
   const commonBtnClasses = `
     h-full w-10 p-0 flex items-center justify-center 
@@ -157,18 +193,25 @@ const CartPage = () => {
                 <td className="py-2 px-4 border-b">{item.name}</td>
                 <td className="py-2 px-4 border-b">
                   {/* Группировка кнопок и инпута количества */}
-                  <div className="flex border border-gray-300 rounded-md overflow-hidden bg-gray-100 items-center h-10 w-32 mx-auto"> {/* mx-auto для центрирования */}
+                  <div className="flex border border-gray-300 rounded-md overflow-hidden bg-gray-100 items-center h-10 w-32 mx-auto">
+                    {" "}
+                    {/* mx-auto для центрирования */}
                     <Button
                       size="sm"
                       variant="text"
                       onClick={() => handleDecrement(item.id)}
                       className={`${commonBtnClasses} ${hoverBtnClasses}`}
+                      placeholder={undefined}
+                      onResize={undefined}
+                      onResizeCapture={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       -
                     </Button>
                     <input
                       type="text"
-                      value={quantityInputs[item.id] || ''}
+                      value={quantityInputs[item.id] || ""}
                       onChange={(e) => handleQuantityInputChange(item.id, e)}
                       onBlur={() => handleQuantityInputBlur(item.id)}
                       className="w-full px-1 py-2 text-center bg-transparent text-black h-full focus:outline-none"
@@ -178,34 +221,62 @@ const CartPage = () => {
                       variant="text"
                       onClick={() => handleIncrement(item.id)}
                       className={`${commonBtnClasses} ${hoverBtnClasses}`}
+                      placeholder={undefined}
+                      onResize={undefined}
+                      onResizeCapture={undefined}
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
                     >
                       +
                     </Button>
                   </div>
                 </td>
                 {uniqueSuppliers.map((supplierName) => {
-                  const supplier = (item.availableSuppliers || []).find((s) => s.name === supplierName);
+                  const supplier = (item.availableSuppliers || []).find(
+                    (s) => s.name === supplierName
+                  );
                   return (
-                    <td key={`${item.id}-${supplierName}`} className="py-2 px-4 border-b text-center">
+                    <td
+                      key={`${item.id}-${supplierName}`}
+                      className="py-2 px-4 border-b text-center"
+                    >
                       {supplier ? (
                         <div className="flex items-center justify-center gap-2">
                           <Checkbox
                             checked={item.selectedSupplierName === supplierName}
-                            onChange={() => handleSupplierSelection(item.id, supplierName)}
-                            ripple={false} 
+                            onChange={() =>
+                              handleSupplierSelection(item.id, supplierName)
+                            }
+                            ripple={false}
                             className="h-5 w-5 rounded-full border-gray-900/20 bg-gray-900/10 transition-all hover:scale-105 hover:before:opacity-0"
+                            onResize={undefined}
+                            onResizeCapture={undefined}
+                            onPointerEnterCapture={undefined}
+                            onPointerLeaveCapture={undefined}
+                            crossOrigin={undefined}
                           />
                           <span>{supplier.price}</span>
                         </div>
                       ) : (
-                        '-'
+                        "-"
                       )}
                     </td>
                   );
                 })}
-                <td className="py-2 px-4 border-b text-center">{calculateItemTotal(item).toFixed(2)}</td>
+                <td className="py-2 px-4 border-b text-center">
+                  {calculateItemTotal(item).toFixed(2)}
+                </td>
                 <td className="py-2 px-4 border-b">
-                  <Button size="sm" className="bg-pink-300" onClick={() => handleRemoveFromCart(item.id)}>
+                  <Button
+                    size="sm"
+                    className="bg-pink-300"
+                    onClick={() => handleRemoveFromCart(item.id)}
+                    placeholder={undefined}
+                    onResize={undefined}
+                    onResizeCapture={undefined}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  >
                     Удалить
                   </Button>
                 </td>
@@ -217,7 +288,10 @@ const CartPage = () => {
               <td className="py-2 px-4 font-semibold">Итоговая сумма:</td>
               <td className="py-2 px-4"></td>
               {uniqueSuppliers.map((supplierName) => (
-                <td key={`total-for-${supplierName}`} className="py-2 px-4 font-semibold text-center">
+                <td
+                  key={`total-for-${supplierName}`}
+                  className="py-2 px-4 font-semibold text-center"
+                >
                   {calculateSupplierTotal(supplierName).toFixed(2)}
                 </td>
               ))}
@@ -225,17 +299,34 @@ const CartPage = () => {
                 {grandTotal.toFixed(2)}
               </td>
               <td className="py-2 px-4">
-                <Button size="sm" className="bg-indigo-500 hover:bg-indigo-600 text-white whitespace-nowrap" onClick={clearCart}>
+                <Button
+                  size="sm"
+                  className="bg-indigo-500 hover:bg-indigo-600 text-white whitespace-nowrap"
+                  onClick={clearCart}
+                  placeholder={undefined}
+                  onResize={undefined}
+                  onResizeCapture={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                >
                   Очистить корзину
                 </Button>
               </td>
             </tr>
             <tr>
-              <td colSpan={2 + uniqueSuppliers.length} className="py-4 px-4 text-right">
+              <td
+                colSpan={2 + uniqueSuppliers.length}
+                className="py-4 px-4 text-right"
+              >
                 <Button
                   size="lg"
                   className="bg-green-500 hover:bg-green-600 text-white whitespace-nowrap"
                   disabled={!canProceedToCheckout}
+                  placeholder={undefined}
+                  onResize={undefined}
+                  onResizeCapture={undefined}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
                 >
                   Оформить заказ
                 </Button>
@@ -296,7 +387,6 @@ export default CartPage;
 
 //   // Вычисляем общую итоговую сумму по всем товарам (используя calculateItemTotal)
 //   const grandTotal = items.reduce((total, item) => total + calculateItemTotal(item), 0);
-
 
 //   if (items.length === 0) {
 //     return (
