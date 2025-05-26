@@ -25,10 +25,12 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
     <div className="flex flex-col gap-8">
       {Object.entries(groupedProducts).map(([category, productsInCategory]) => (
         <div key={category}>
-          <h2 className="text-xl font-semibold mb-4 text-blue-gray-600">{category}</h2>
+          <h2 className="text-xl font-semibold mb-4 text-blue-gray-600">
+            {category}
+          </h2>
           <div className="flex flex-col">
             {productsInCategory.map((product) => (
-              <ProductCard key={product.id} product={product as any} />
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
@@ -38,60 +40,3 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
 };
 
 export default ProductList;
-
-
-
-
-//***************************************************************************** */
-// import React from "react";
-// import ProductCard from "./ProductCard";
-// import type { MetalProduct } from "../../auth/types/index";
-
-// interface ProductListProps {
-//   products: MetalProduct[];
-// }
-
-// const ProductList: React.FC<ProductListProps> = ({ products }) => {
-//   return (
-//     <div className="flex flex-col">
-//       {products.map((product) => (
-//         <ProductCard key={product.id} product={product as any} />
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default ProductList;
-
-
-
-//************************************************************************************************ */
-// import React from "react";
-// import ProductCard from "./ProductCard";
-
-// interface Product {
-//   id: number;
-//   name: string;
-//   price: number;
-//   inStock: boolean;
-//   diameter?: string;
-//   length?: string;
-//   gost?: string;
-//   category?: string;
-// }
-
-// interface ProductListProps {
-//   products: Product[];
-// }
-
-// const ProductList: React.FC<ProductListProps> = ({ products }) => {
-//   return (
-//     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-//       {products.map((product) => (
-//         <ProductCard key={product.id} product={product} />
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default ProductList;
