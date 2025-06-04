@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import "./App.css";
 import LoginPage from "./features/auth/pages/LoginPage";
 import RegisterPage from "./features/auth/pages/RegisterPage";
@@ -9,35 +9,37 @@ import CatalogPage from "./features/catalog/CatalogPage";
 import CartPage from "./pages/CartPage";
 import OrdersPage from "./pages/OrdersPage";
 import { CartProvider } from "./context/CartContext";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
+import { colors } from "./constants/themeColors";
+import ErrorBoundary from "./components/ErrorBoundary";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function AppContent() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const { theme } = useTheme();
+  const currentThemeColors = colors[theme];
 
   const handleCheckoutSuccess = () => {
-    navigate('/orders'); 
+    navigate('/orders');
     alert("Заказ успешно оформлен! Вы будете перенаправлены на страницу заказов.");
   };
 
   return (
     <CartProvider onCheckoutSuccess={handleCheckoutSuccess}>
-      <div className="min-h-screen flex flex-col">
+      <div className={`min-h-screen flex flex-col ${currentThemeColors.primaryBackground} transition-colors duration-300`}>
         <Header onSearchChange={() => true} searchValue={""} />
-          <div className="flex items-center space-x-4">
-            <Link to="/catalog" className="text-white hover:underline">Каталог</Link>
-            <Link to="/cart" className="text-white hover:underline">Корзина</Link>
-            <Link to="/orders" className="text-white hover:underline">Мои Заказы</Link>
-            <Link to="/login" className="text-white hover:underline">Войти</Link>
-            <Link to="/register" className="text-white hover:underline">Регистрация</Link>
-          </div>
         <main className="flex-1 pt-20">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/catalog" element={<CatalogPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/orders" element={<OrdersPage />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/catalog" element={<CatalogPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </ErrorBoundary>
         </main>
         <Footer />
       </div>
@@ -48,7 +50,9 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </Router>
   );
 }
