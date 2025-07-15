@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import ProductList from "./copmonents/ProductList";
 import type { MetalProduct } from "../auth/types/index";
 import Header from "../auth/components/Header";
@@ -6,6 +6,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { colors } from "../../constants/themeColors";
 import { Typography, Checkbox } from "@material-tailwind/react";
 import ProductSort from "./copmonents/ProductSort";
+import $api from "../../api/axios";
 
 const productsData: MetalProduct[] = [
   {
@@ -231,6 +232,17 @@ const CatalogPage = () => {
     colorType: [],
   });
   const [sortBy, setSortBy] = useState<SortOption>("name");
+  const [productsDataFetched, setProductsDataFetched] = useState<MetalProduct[]>([]);
+
+  useEffect(() => {
+    // Simulate fetching data from an API
+    $api.get<any>('/parser-mc/data').then(response => {
+      setProductsDataFetched(response.data?.products || []);
+    }).catch(error => {
+      console.error("Ошибка при загрузке данных:", error);
+      setProductsDataFetched(productsData); // Fallback to static data
+    });
+  }, []);
 
   const { theme } = useTheme();
   const currentColors = colors[theme];
@@ -259,7 +271,7 @@ const CatalogPage = () => {
   };
 
   const sortedAndFilteredProducts = useMemo(() => {
-    let currentProducts = productsData.filter((product) => {
+    let currentProducts = productsDataFetched?.filter((product) => {
       const matchesSearch = product.name
         .toLowerCase()
         .includes(search.toLowerCase());
@@ -286,7 +298,7 @@ const CatalogPage = () => {
     });
 
     return currentProducts;
-  }, [productsData, search, filters, sortBy]);
+  }, [productsDataFetched, search, filters, sortBy]);
 
   const commonPlaceholderProps = {
     placeholder: undefined,

@@ -26,4 +26,5 @@ export interface Product {
   imageUrl?: string;
   suppliers?: { name: string; price: number }[];
   quantity: number;
+  link?: string; // Добавлено для ссылок на страницы товаров
 }

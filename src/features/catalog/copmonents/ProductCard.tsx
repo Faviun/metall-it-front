@@ -96,9 +96,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     >
       <div className="w-full md:w-1/4 mb-4 md:mb-0 md:mr-4">
         <img
-          src={product.imageUrl || "https://via.placeholder.com/200x150?text=No+Image"} // Добавлено fallback изображение
+          src={product.imageUrl || product.link || "https://via.placeholder.com/200x150?text=No+Image"} // Добавлено fallback изображение
           alt={product.name}
           className="w-full h-auto rounded-md"
+          loading="lazy"
         />
       </div>
 
