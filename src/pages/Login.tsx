@@ -1,7 +1,7 @@
-import LoginForm from "../components/LoginForm";
-import $api from "../../../api/axios";
-import { useTheme } from "../../../context/ThemeContext";
-import { colors } from "../../../constants/themeColors";
+import LoginForm from "@/features/auth/components/LoginForm";
+import $api from "@/api/axios";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
 
 const LoginPage = () => {
   // const { login } = useAuth();

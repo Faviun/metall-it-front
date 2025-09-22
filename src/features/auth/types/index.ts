@@ -1,30 +1,78 @@
-export interface MetalProduct {
+// Новый интерфейс для продуктов из API поставщика
+export interface ApiProduct {
   id: number;
-  name: string;
-  price: number;
-  inStock: boolean;
-  diameter: string;
-  length: string;
-  grade: string;
+  provider: string;
   category: string;
-  imageUrl?: string;
-  colorType: "черный" | "цветной";
-  suppliers?: { name: string; price: number }[];
-  quantity: number;
+  name: string;
+  parserName: string | null;
+  description: string;
+  gost: string;
+  length: string;
+  price1: number | null;
+  price2: number | null;
+  available: boolean;
+  image: string;
+  link: string;
+  size: string | null;
+  mark: string | null;
+  location: string | null;
+  weight: string | null;
+  width: string | null;
+  updatedAt: string;
 }
 
+export interface ApiResponse {
+  message: string;
+  provider: string;
+  total: number;
+  perPage: number;
+  filterProducts: ApiProduct[];
+}
+
+// Этот тип мы будем использовать для отображения в карточках
 export interface Product {
   id: number;
   name: string;
   price: number;
   inStock: boolean;
+  category: string;
+  imageUrl?: string;
+  suppliers?: { name: string; price: number }[];
+  link?: string;
   diameter?: string;
   length?: string;
   grade?: string;
-  category?: string;
-  colorType?: "черный" | "цветной";
-  imageUrl?: string;
-  suppliers?: { name: string; price: number }[];
+  colorType?: string;
   quantity: number;
-  link?: string; // Добавлено для ссылок на страницы товаров
 }
+
+// export interface MetalProduct {
+//   id: number;
+//   name: string;
+//   price: number;
+//   inStock: boolean;
+//   diameter: string;
+//   length: string;
+//   grade: string;
+//   category: string;
+//   imageUrl?: string;
+//   colorType: "черный" | "цветной";
+//   suppliers?: { name: string; price: number }[];
+//   quantity: number;
+// }
+
+// export interface Product {
+//   id: number;
+//   name: string;
+//   price: number;
+//   inStock: boolean;
+//   diameter?: string;
+//   length?: string;
+//   grade?: string;
+//   category?: string;
+//   colorType?: "черный" | "цветной";
+//   imageUrl?: string;
+//   suppliers?: { name: string; price: number }[];
+//   quantity: number;
+//   link?: string; // Добавлено для ссылок на страницы товаров
+// }

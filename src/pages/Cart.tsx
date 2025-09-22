@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useCart } from "../context/CartContext";
+import { useCart } from "@/context/CartContext";
 import { Button, Checkbox } from "@material-tailwind/react";
-import type { CartItem } from "../context/CartContext";
-import { useTheme } from "../context/ThemeContext"; // Импорт useTheme
-import { colors } from "../constants/themeColors"; // Импорт colors
+import type { CartItem } from "@/context/CartContext";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
 
 const CartPage = () => {
   const {
@@ -15,8 +15,8 @@ const CartPage = () => {
     placeOrder,
   } = useCart();
 
-  const { theme } = useTheme(); // Получаем текущую тему
-  const currentColors = colors[theme]; // Получаем объект цветов для текущей темы
+  const { theme } = useTheme();
+  const currentColors = colors[theme];
 
   const [quantityInputs, setQuantityInputs] = useState<{
     [key: number]: string;

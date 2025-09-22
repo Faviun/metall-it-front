@@ -3,31 +3,54 @@ import { footerColors } from "../../constants/themeColors";
 
 const Footer = () => {
   const { theme } = useTheme();
-
   const currentFooterColors = footerColors[theme];
 
   return (
-    <footer className={`w-full ${currentFooterColors.background} ${currentFooterColors.text} py-6 mt-auto transition-colors duration-300`}>
-      <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center">
-        <div className="mb-4 sm:mb-0 text-center sm:text-left">
-          <h1 className={`text-2xl font-bold ${currentFooterColors.logoText}`}>МеталлМаркет</h1>
-          <p className="text-sm">Ваш надежный поставщик металлопроката</p>
+      <footer className={`w-full ${currentFooterColors.background} ${currentFooterColors.text} py-6 transition-colors duration-300`}>
+
+      <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+        {/* Логотип и слоган */}
+        <div className="text-center sm:text-left">
+          <h1
+            className={`text-2xl font-bold ${currentFooterColors.logoText}`}
+          >
+            Металл<span className={currentFooterColors.accentText}>Маркет</span>
+          </h1>
+          <p className="text-sm opacity-80">
+            Ваш надежный поставщик металлопроката
+          </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 text-center sm:text-left">
-          <a href="/about" className={`${currentFooterColors.text} ${currentFooterColors.linkHover}`}>
+
+        {/* Навигация */}
+        <nav className="flex flex-col sm:flex-row gap-4 text-center sm:text-left">
+          <a
+            href="/about"
+            className={`${currentFooterColors.text} ${currentFooterColors.linkHover} transition-colors`}
+          >
             О нас
           </a>
-          <a href="/contact" className={`${currentFooterColors.text} ${currentFooterColors.linkHover}`}>
+          <a
+            href="/contact"
+            className={`${currentFooterColors.text} ${currentFooterColors.linkHover} transition-colors`}
+          >
             Контакты
           </a>
-          <a href="/privacy" className={`${currentFooterColors.text} ${currentFooterColors.linkHover}`}>
+          <a
+            href="/privacy"
+            className={`${currentFooterColors.text} ${currentFooterColors.linkHover} transition-colors`}
+          >
             Политика конфиденциальности
           </a>
-        </div>
+        </nav>
       </div>
-      <div className={`mt-2 pt-2 text-center text-sm ${currentFooterColors.divider} border-t`}>
+
+      {/* Копирайт */}
+      <div
+        className={`mt-4 pt-4 text-center text-sm border-t ${currentFooterColors.divider}`}
+      >
         <p>
-          &copy; {new Date().getFullYear()} МеталлМаркет. Все права защищены.
+          &copy; {new Date().getFullYear()}{" "}
+          МеталлМаркет. Все права защищены.
         </p>
       </div>
     </footer>
@@ -35,6 +58,45 @@ const Footer = () => {
 };
 
 export default Footer;
+
+
+// import { useTheme } from "../../context/ThemeContext";
+// import { footerColors } from "../../constants/themeColors";
+
+// const Footer = () => {
+//   const { theme } = useTheme();
+
+//   const currentFooterColors = footerColors[theme];
+
+//   return (
+//     <footer className={`w-full ${currentFooterColors.background} ${currentFooterColors.text} py-6 mt-auto transition-colors duration-300`}>
+//       <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center">
+//         <div className="mb-4 sm:mb-0 text-center sm:text-left">
+//           <h1 className={`text-2xl font-bold ${currentFooterColors.logoText}`}>МеталлМаркет</h1>
+//           <p className="text-sm">Ваш надежный поставщик металлопроката</p>
+//         </div>
+//         <div className="flex flex-col sm:flex-row gap-4 text-center sm:text-left">
+//           <a href="/about" className={`${currentFooterColors.text} ${currentFooterColors.linkHover}`}>
+//             О нас
+//           </a>
+//           <a href="/contact" className={`${currentFooterColors.text} ${currentFooterColors.linkHover}`}>
+//             Контакты
+//           </a>
+//           <a href="/privacy" className={`${currentFooterColors.text} ${currentFooterColors.linkHover}`}>
+//             Политика конфиденциальности
+//           </a>
+//         </div>
+//       </div>
+//       <div className={`mt-2 pt-2 text-center text-sm ${currentFooterColors.divider} border-t`}>
+//         <p>
+//           &copy; {new Date().getFullYear()} МеталлМаркет. Все права защищены.
+//         </p>
+//       </div>
+//     </footer>
+//   );
+// };
+
+// export default Footer;
 
 
 // const Footer = () => {

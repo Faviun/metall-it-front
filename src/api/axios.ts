@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosHeaders } from "axios";
 
 interface MyAxiosError<T = any> extends Error {
   config?: any;
@@ -33,7 +33,7 @@ $api.interceptors.request.use(
     const token = localStorage.getItem('authToken');
 
     if (!config.headers) {
-      config.headers = {};
+      config.headers = new AxiosHeaders();
     }
 
     if (token) {

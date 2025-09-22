@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useEffect } from "react";
-import ProductList from "./copmonents/ProductList";
-import type { MetalProduct } from "../auth/types/index";
-import Header from "../auth/components/Header";
-import { useTheme } from "../../context/ThemeContext";
-import { colors } from "../../constants/themeColors";
+import ProductList from "@/features/catalog/components/ProductList";
+import type { Product } from "@/features/auth/types/index";
+import Header from "@/features/auth/components/Header";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
 import { Typography, Checkbox } from "@material-tailwind/react";
-import ProductSort from "./copmonents/ProductSort";
-import $api from "../../api/axios";
+import ProductSort from "@/features/catalog/components/ProductSort";
+import $api from "@/api/axios";
 
-const productsData: MetalProduct[] = [
+const productsData: Product[] = [
   {
     id: 1,
     name: "Арматура ф10 А500С",
@@ -232,7 +232,7 @@ const CatalogPage = () => {
     colorType: [],
   });
   const [sortBy, setSortBy] = useState<SortOption>("name");
-  const [productsDataFetched, setProductsDataFetched] = useState<MetalProduct[]>([]);
+  const [productsDataFetched, setProductsDataFetched] = useState<Product[]>([]);
 
   useEffect(() => {
     // Simulate fetching data from an API

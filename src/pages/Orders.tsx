@@ -1,7 +1,7 @@
-import { useCart } from "../context/CartContext";
-import type { Order, OrderItem } from "../context/CartContext";
-import { useTheme } from "../context/ThemeContext";
-import { colors } from "../constants/themeColors";
+import { useCart } from "@/context/CartContext";
+import type { Order, OrderItem } from "@/context/CartContext";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
 import React from "react";
 
 const OrdersPage = () => {

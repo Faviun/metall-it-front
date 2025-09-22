@@ -1,14 +1,14 @@
 import React from "react";
 import ProductCard from "./ProductCard";
-import type { MetalProduct } from "../../auth/types/index";
-import { useTheme } from "../../../context/ThemeContext";
-import { colors } from "../../../constants/themeColors";
+import type { Product } from "@/features/auth/types/index";   //auth/types/index";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
 
 interface ProductListProps {
-  products: MetalProduct[];
+  products: Product[];
 }
 
-function groupProductsByCategory(products: MetalProduct[]) {
+function groupProductsByCategory(products: Product[]) {
   return products.reduce((acc, product) => {
     const category = product.category || "Без категории";
     if (!acc[category]) {
@@ -16,7 +16,7 @@ function groupProductsByCategory(products: MetalProduct[]) {
     }
     acc[category].push(product);
     return acc;
-  }, {} as Record<string, MetalProduct[]>);
+  }, {} as Record<string, Product[]>);
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {

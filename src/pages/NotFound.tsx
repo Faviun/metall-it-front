@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography, Button } from '@material-tailwind/react';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
-import { colors } from '../constants/themeColors';
+import { useTheme } from '@/context/ThemeContext';
+import { colors } from '@/constants/themeColors';
 
 const NotFoundPage: React.FC = () => {
   const { theme } = useTheme();
