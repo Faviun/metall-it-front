@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 function Header({ onSearchChange, searchValue }: HeaderProps) {
-  const { isAuthenticated, logout } = useAuth();
+  // const { isAuthenticated, logout } = useAuth();
   const { items } = useCart();
   const { theme } = useTheme();
   
@@ -23,6 +23,9 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
   const colors = headerColors[theme];
   const suppliersMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  const isAuthenticated = !!localStorage.getItem("access_token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -106,7 +109,10 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
             {isAuthenticated ? (
               <>
                 <Link to="/profile" className={`${colors.text} ${colors.linkHover}`}>Профиль</Link>
-                <button onClick={logout} className={`${colors.text} ${colors.linkHover}`}>Выйти</button>
+                <button onClick={() => {
+          localStorage.removeItem("access_token");
+          navigate("/login");
+        }} className={`${colors.text} ${colors.linkHover}`}>Выйти</button>
               </>
             ) : (
               <>
@@ -151,7 +157,8 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
                       {isAuthenticated ? (
                           <>
                               <li><Link to="/profile" onClick={() => setMobileMenuOpen(false)} className={`block px-3 py-2 rounded-md hover:bg-light-border dark:hover:bg-dark-border ${colors.text}`}>Профиль</Link></li>
-                              <li><button onClick={() => { logout(); setMobileMenuOpen(false); }} className={`w-full text-left block px-3 py-2 rounded-md hover:bg-light-border dark:hover:bg-dark-border ${colors.text}`}>Выйти</button></li>
+                              <li><button onClick={() => { localStorage.removeItem("access_token");
+          navigate("/login");; setMobileMenuOpen(false); }} className={`w-full text-left block px-3 py-2 rounded-md hover:bg-light-border dark:hover:bg-dark-border ${colors.text}`}>Выйти</button></li>
                           </>
                       ) : (
                           <>
