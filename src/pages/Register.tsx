@@ -1,6 +1,6 @@
-import RegisterForm from "../components/RegisterForm";
-import { useTheme } from "../../../context/ThemeContext";
-import { colors } from "../../../constants/themeColors";
+import RegisterForm from "@/features/auth/components/RegisterForm";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
 
 function RegisterPage() {
 
