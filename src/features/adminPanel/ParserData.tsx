@@ -106,7 +106,7 @@ const ParserData: React.FC<DiposParserProps> = ({link, name, urlProvider} ) => {
         <button className='bg-gray-300' onClick={downloadExcel} disabled={loading}>Скачать Excel</button>
 
       {message && <p>{message}</p>}
-      {/* <h3>Товары</h3>
+      <h3>Товары</h3>
       <table border={1} cellPadding={5} cellSpacing={0}>
         <thead>
           <tr>
@@ -131,7 +131,7 @@ const ParserData: React.FC<DiposParserProps> = ({link, name, urlProvider} ) => {
         <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))} disabled={page === 1}>Назад</button>
         <span style={{ margin: '0 10px' }}>Страница {page}</span>
         <button onClick={() => setPage((prev) => prev + 1)} disabled={page * perPage >= total}>Вперед</button>
-      </div> */}
+      </div>
     </div>
   );
 };
