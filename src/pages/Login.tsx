@@ -1,136 +1,127 @@
-import { Button, Input, Typography } from "@material-tailwind/react";
-import  { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
-import { colors } from "../constants/themeColors";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
 
-const commonPlaceholderProps = {
-    placeholder: undefined,
-    onResize: undefined,
-    onResizeCapture: undefined,
-    onPointerEnterCapture: undefined,
-    onPointerLeaveCapture: undefined,
-  };
+function LoginPage() {
+    const [form, setForm] = useState({ email: "", password: "" });
+    const [isLoading, setIsLoading] = useState(false);
+    // ✨ Используем единое состояние для всех сообщений
+    const [feedback, setFeedback] = useState({ text: '', type: '' });
+    const navigate = useNavigate();
 
-function LoginForm() {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [isLoginLoading, setIsLoginLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+    const { theme } = useTheme();
+    const currentThemeColors = colors[theme];
 
-  const { theme } = useTheme();
-  const currentThemeColors = colors[theme];
+    // ✨ Добавляем строгую типизацию
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
-  const handleChange = (e: any) => setForm({ ...form, [e.target.name]: e.target.value });
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setFeedback({ text: '', type: '' });
+        setIsLoading(true); // ✨ Устанавливаем состояние загрузки
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setMessage("");
+        if (!form.email || !form.password) {
+            setFeedback({ text: 'Пожалуйста, введите email и пароль.', type: 'error' });
+            setIsLoading(false);
+            return;
+        }
 
-    if (!form.email || !form.password) {
-        setMessage('Пожалуйста, введите email и пароль.');
-        setIsLoginLoading(false);
-        return;
-    }
+        try {
+            // ✨ Используем apiFetch вместо стандартного fetch
+            // Обратите внимание, что здесь токен не нужен, поэтому мы делаем "публичный" запрос
+            const res = await fetch(`${import.meta.env.VITE_API_URL}auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
 
-    try {
-      const res = await fetch("http://185.23.34.85:3000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Ошибка авторизации");
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.message || "Ошибка авторизации: неверный email или пароль.");
+            }
 
-      setIsLoginLoading(false);
+            localStorage.setItem("access_token", data.access_token);
+            setFeedback({ text: "✅ Успешный вход! Перенаправляем...", type: 'success' });
 
-      localStorage.setItem("access_token", data.access_token);
-      setMessage("✅ Успешный вход!");
-      navigate("/profile");
-    } catch (err: any) {
-      setMessage(`❌ ${err.message}`);
-    }
-  };
+            setTimeout(() => {
+                navigate("/profile");
+            }, 1000);
 
-  return (
-    <div className={`max-w-sm mx-auto mt-10 space-y-6 p-6 rounded-lg shadow-lg border transition-colors duration-300
-        ${currentThemeColors.secondaryBackground}
-        ${currentThemeColors.bordersDividers}`}>
-      <Typography
-        variant="h4"
-        as="h4"
-        className={`text-center mb-6 ${currentThemeColors.primaryText}`}
-        {...commonPlaceholderProps}
-      >
-        Вход
-      </Typography>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        {/* <input type="email" name="email" value={form.email} onChange={handleChange} required placeholder="Email" /> */}
-        <Input
-          label="Email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          className={`${currentThemeColors.primaryText}`}
-          labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-          containerProps={{ className: "min-w-0" }}
-          {...commonPlaceholderProps}
-          crossOrigin={undefined}
-        />
-        {/* <input type="password" name="password" value={form.password} onChange={handleChange} required placeholder="Пароль" /> */}
-        <Input
-          type="password"
-          label="Пароль"
-          name="password"
-          value={form.password}
-          onChange={handleChange}
-          className={`${currentThemeColors.primaryText}`}
-          labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-          containerProps={{ className: "min-w-0" }}
-          {...commonPlaceholderProps}
-          crossOrigin={undefined}
-        />
-        {message && (
-        <Typography
-          color='red'
-          className="text-center"
-          role="alert"
-          {...commonPlaceholderProps}
+        } catch (err) {
+            if (err instanceof Error) {
+                setFeedback({ text: `❌ ${err.message}`, type: 'error' });
+            } else {
+                setFeedback({ text: '❌ Произошла неизвестная ошибка', type: 'error' });
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className={`max-w-md mx-auto mt-10 p-8 rounded-lg shadow-lg border 
+            ${currentThemeColors.secondaryBackground} 
+            ${currentThemeColors.bordersDividers}`}
         >
-          {message}
-        </Typography>
-      )}
-        <Button
-        type="submit"
-        fullWidth
-        disabled={isLoginLoading}
-        className={`${currentThemeColors.primaryAccent} hover:shadow-lg ${theme === 'light' ? 'hover:shadow-blue-gray-500/50' : 'hover:shadow-gray-900/50'} transition-shadow duration-300`}
-        {...commonPlaceholderProps}
-      >
-        {isLoginLoading ? 'Вход...' : 'Войти'}
-      </Button>
-      </form>
-      {/* {message && <p>{message}</p>} */}
+            <h2 className={`text-center text-3xl font-bold mb-6 ${currentThemeColors.primaryText}`}>
+                Вход в аккаунт
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                    <label htmlFor="email" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>
+                        Email
+                    </label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        required
+                        className="standard-input" // ✨ Используем ваш класс для инпута
+                    />
+                </div>
+                <div>
+                    <label htmlFor="password" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>
+                        Пароль
+                    </label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        required
+                        className="standard-input" // ✨ Используем ваш класс для инпута
+                    />
+                </div>
+                
+                {feedback.text && (
+                    <div className={feedback.type === 'error' ? 'alert-error' : 'alert-success'}>
+                        {feedback.text}
+                    </div>
+                )}
 
-      <div className="mt-4 text-center">
-        <Typography
-          variant="small"
-          className={`${currentThemeColors.secondaryText}`}
-          {...commonPlaceholderProps}
-        >
-          Нет аккаунта?{" "}
-          <Link
-            to="/register"
-            className={`${currentThemeColors.primaryAccent.includes('text-black') ? 'text-black' : 'text-white'} hover:underline`}
-            style={{ color: theme === 'light' ? '#B36700' : '#FFD700' }}
-          >
-            Регистрация
-          </Link>
-        </Typography>
-      </div>
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className={isLoading ? 'inactive-button' : 'primary-button'} // ✨ Используем ваши классы для кнопки
+                >
+                    {isLoading ? 'Вход...' : 'Войти'}
+                </button>
 
-    </div>
-  );
+                <p className={`text-center text-sm ${currentThemeColors.secondaryText}`}>
+                    Нет аккаунта?{' '}
+                    <Link to="/register" className="font-medium text-accent hover:underline">
+                        Зарегистрироваться
+                    </Link>
+                </p>
+            </form>
+        </div>
+    );
 }
 
-export default LoginForm;
+export default LoginPage;

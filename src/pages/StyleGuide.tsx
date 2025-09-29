@@ -6,20 +6,20 @@ const StyleGuidePage = () => {
   const c = colors[theme]; // Короткий псевдоним для удобства
 
   return (
-    <div className={`font-sans ${c.primaryBackground} ${c.primaryText} pt-20`}>
+    <div className={`font-sans ${c.primaryBackground} ${c.primaryText}`}>
       <main className="container mx-auto p-4">
         {/* --- Секция Кнопки --- */}
         <section className="mb-8">
           <h2 className={`text-3xl font-bold mb-4 border-l-4 border-accent pl-4 ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}>Кнопки (Buttons)</h2>
           <div className={`${c.secondaryBackground} ${c.bordersDividers} border p-6 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 items-center`}>
-            <button className="w-full bg-accent hover:bg-accent-hover text-black font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">Основная</button>
-            <button className="w-full bg-transparent hover:bg-accent text-accent font-semibold hover:text-black py-2 px-4 border-2 border-accent hover:border-transparent rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">Второстепенная</button>
-            <button className="w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">Темная</button>
-            <button className="w-full bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">Светлая</button>
-            <button className="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">Неактивная</button>
-            <button className="w-full bg-accent hover:bg-accent-hover text-black font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">Круглая</button>
-            <button className="flex items-center justify-center gap-2 w-full bg-accent hover:bg-accent-hover text-black font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"><i className="fas fa-download"></i> Скачать</button>
-            <button className="p-3 rounded-full bg-accent text-black hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"><i className="fas fa-plus"></i></button>
+            <button className="primary-button">Основная</button>
+            <button className="secondary-button">Второстепенная</button>
+            <button className="dark-button">Темная</button>
+            <button className="light-button">Светлая</button>
+            <button className="inactive-button">Неактивная</button>
+            <button className="round-button">Круглая</button>
+            <button className="download-button"><i className="fas fa-download"></i> Скачать</button>
+            <button className="add-button"><i className="fas fa-plus"></i></button>
           </div>
         </section>
         
@@ -30,12 +30,12 @@ const StyleGuidePage = () => {
             <div>
               <h3 className="text-xl font-medium mb-3">Поля ввода (Inputs)</h3>
               <div className="flex flex-col gap-4">
-                <input className={`w-full p-2 rounded ${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border ${c.bordersDividers} placeholder:text-gray-500 focus:ring-2 focus:ring-accent focus:border-transparent`} type="text" placeholder="Стандартное поле" />
-                <input className={`w-full p-2 rounded ${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border border-green-500 placeholder:text-gray-500 focus:ring-2 focus:ring-green-500 focus:border-transparent`} type="text" placeholder="Успешный ввод" />
-                <input className={`w-full p-2 rounded ${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border border-red-500 placeholder:text-gray-500 focus:ring-2 focus:ring-red-500 focus:border-transparent`} type="text" placeholder="Ошибка ввода" />
+                <input className="standard-input" type="text" placeholder="Стандартное поле" />
+                <input className="successful-input" type="text" placeholder="Успешный ввод" />
+                <input className="error-input" type="text" placeholder="Ошибка ввода" />
                 <div className="relative">
                   <i className="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                  <input className={`w-full p-2 pl-10 rounded ${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border ${c.bordersDividers} placeholder:text-gray-500 focus:ring-2 focus:ring-accent focus:border-transparent`} type="text" placeholder="Поле с иконкой" />
+                  <input className="standard-input pl-10" type="text" placeholder="Поле с иконкой" />
                 </div>
               </div>
             </div>
@@ -44,19 +44,19 @@ const StyleGuidePage = () => {
                   <h3 className="text-xl font-medium mb-3">Чекбоксы и радиокнопки</h3>
                   <div className="flex flex-col gap-4">
                       <label className="flex items-center">
-                          <input type="checkbox" className="h-5 w-5 rounded border-gray-300 text-accent focus:ring-0 focus:ring-offset-0" />
+                          <input type="checkbox" className="checkbox" />
                           <span className="ml-2">Чекбокс 1</span>
                       </label>
                       <label className="flex items-center">
-                          <input type="checkbox" defaultChecked className="h-5 w-5 rounded border-gray-300 text-accent focus:ring-0 focus:ring-offset-0" />
+                          <input type="checkbox" defaultChecked className="checkbox" />
                           <span className="ml-2">Выбранный чекбокс</span>
                       </label>
                       <label className="flex items-center">
-                          <input type="radio" name="radio-group" className="h-5 w-5 border-gray-300 text-accent focus:ring-0 focus:ring-offset-0" />
+                          <input type="radio" name="radio-group" className="radio" />
                           <span className="ml-2">Радиокнопка 1</span>
                       </label>
                       <label className="flex items-center">
-                          <input type="radio" name="radio-group" defaultChecked className="h-5 w-5 border-gray-300 text-accent focus:ring-0 focus:ring-offset-0" />
+                          <input type="radio" name="radio-group" defaultChecked className="radio" />
                           <span className="ml-2">Выбранная радиокнопка</span>
                       </label>
                   </div>
@@ -70,7 +70,7 @@ const StyleGuidePage = () => {
             </div>
             <div>
                 <h3 className="text-xl font-medium mb-3">Область текста (Textarea)</h3>
-                <textarea className={`w-full p-2 rounded ${theme === 'light' ? 'bg-light-bg' : 'bg-dark-bg'} border ${c.bordersDividers} placeholder:text-gray-500 focus:ring-2 focus:ring-accent focus:border-transparent`} rows={4} placeholder="Введите ваш комментарий..."></textarea>
+                <textarea className="textarea" rows={4} placeholder="Введите ваш комментарий..."></textarea>
             </div>
             <div>
                 <h3 className="text-xl font-medium mb-3">Ползунок (Range Slider)</h3>
@@ -162,7 +162,7 @@ const StyleGuidePage = () => {
               
               {/* Информация */}
               <div 
-                className="bg-[#FEF3C7] border-l-4 border-[#F59E0B] text-[#B45309] p-4 rounded-r-lg" 
+                className="alert-information" 
                 role="alert">
                   <p className="font-bold">Информация</p>
                   <p>Информационное сообщение в стиле "Мегаполис".</p>
@@ -170,7 +170,7 @@ const StyleGuidePage = () => {
 
               {/* Успех */}
               <div 
-                className="bg-[#D1FAE5] border-l-4 border-[#10B981] text-[#065F46] p-4 rounded-r-lg" 
+                className="alert-success" 
                 role="alert">
                   <p className="font-bold">Успех</p>
                   <p>Ваша заявка успешно отправлена!</p>
@@ -178,7 +178,7 @@ const StyleGuidePage = () => {
 
               {/* Ошибка */}
               <div 
-                className="bg-[#FEE2E2] border-l-4 border-[#EF4444] text-[#B91C1C] p-4 rounded-r-lg" 
+                className="alert-error" 
                 role="alert">
                   <p className="font-bold">Ошибка</p>
                   <p>Не удалось загрузить данные. Попробуйте позже.</p>
@@ -186,7 +186,7 @@ const StyleGuidePage = () => {
 
               <h3 className="text-xl font-medium mt-6 mb-3">Индикатор загрузки (Spinner)</h3>
               <div className="flex items-center gap-4">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-accent"></div>
+                  <div className="spinner"></div>
                   <span>Загрузка данных...</span>
               </div>
               </div>

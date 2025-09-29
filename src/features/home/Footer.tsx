@@ -6,7 +6,7 @@ const Footer = () => {
   const currentFooterColors = footerColors[theme];
 
   return (
-      <footer className={`w-full ${currentFooterColors.background} ${currentFooterColors.text} py-6 transition-colors duration-300`}>
+      <footer className={`mt-12 w-full ${currentFooterColors.background} ${currentFooterColors.text} py-6 transition-colors duration-300`}>
 
       <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
         {/* Логотип и слоган */}

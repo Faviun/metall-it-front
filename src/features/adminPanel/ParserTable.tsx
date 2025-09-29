@@ -65,7 +65,7 @@ const updateParams = (key: string, value: string) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const url = new URL("http://185.23.34.85:3000/data"); // без page/limit
+        const url = new URL(`${import.meta.env.VITE_API_URL}data`); // без page/limit
         searchParams.forEach((v, k) => url.searchParams.set(k, v));
 
         const res = await fetch(url.toString());

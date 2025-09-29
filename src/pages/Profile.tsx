@@ -1,209 +1,144 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Input, Typography } from "@material-tailwind/react";
-import { useTheme } from "../context/ThemeContext";
-import { colors } from "../constants/themeColors";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
+import apiFetch from '@/utils/api'
 
-const commonPlaceholderProps = {
-    placeholder: undefined,
-    onResize: undefined,
-    onResizeCapture: undefined,
-    onPointerEnterCapture: undefined,
-    onPointerLeaveCapture: undefined,
-  };
-
-async function apiFetch(url: string, options: RequestInit = {}) {
-  const token = localStorage.getItem("access_token");
-  if (!token) throw new Error("Токен не найден. Сначала авторизуйтесь!");
-
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...(options.headers || {}),
-    },
-  });
-
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || "Ошибка при запросе");
-  return data;
+interface UserProfile {
+    id: number;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+    phone: string | null;
+    address: string | null;
+    sex: string | null;
+    role: 'USER' | 'ADMIN';
 }
 
-function Profile() {
-  const [user, setUser] = useState<any>(null);
-  const [editData, setEditData] = useState<any>({});
-  const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
-  const navigate = useNavigate();
+function ProfilePage() {
+    const [user, setUser] = useState<UserProfile | null>(null);
+    const [editData, setEditData] = useState<Partial<UserProfile>>({});
+    const [feedback, setFeedback] = useState({ text: '', type: '' });
+    const [isSaving, setIsSaving] = useState(false);
+    const navigate = useNavigate();
 
-  const { theme } = useTheme();
-  const currentThemeColors = colors[theme];
+    const { theme } = useTheme();
+    const currentThemeColors = colors[theme];
 
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const data: UserProfile = await apiFetch(`${import.meta.env.VITE_API_URL}users/profile`);
+                setUser(data);
+                setEditData(data);
+            } catch (err) {
+                if (err instanceof Error) {
+                    setFeedback({ text: err.message, type: 'error' });
+                }
+                localStorage.removeItem("access_token");
+                navigate("/login");
+            }
+        };
+        fetchUser();
+    }, [navigate]);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const data = await apiFetch("http://185.23.34.85:3000/users/profile");
-        setUser(data);
-        setEditData(data);
-      } catch (err: any) {
-        setError(err.message);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditData({ ...editData, [e.target.name]: e.target.value });
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        setFeedback({ text: '', type: '' });
+        try {
+            const updatedUser: UserProfile = await apiFetch(`${import.meta.env.VITE_API_URL}users/profile`, {
+                method: "PUT",
+                body: JSON.stringify(editData),
+            });
+            setUser(updatedUser);
+            setEditData(updatedUser);
+            setFeedback({ text: '✅ Профиль успешно обновлён!', type: 'success' });
+        } catch (err) {
+            if (err instanceof Error) {
+                setFeedback({ text: `❌ ${err.message}`, type: 'error' });
+            }
+        } finally {
+            setIsSaving(false);
+        }
+    };
+    
+    const handleLogout = () => {
         localStorage.removeItem("access_token");
         navigate("/login");
-      }
     };
-    fetchUser();
-  }, [navigate]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditData({ ...editData, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      const updated = await apiFetch("http://localhost:3000/users/profile", {
-        method: "PUT",
-        body: JSON.stringify(editData),
-      });
-      setUser(updated);
-      setEditData(updated);
-      alert("Профиль обновлён!");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setSaving(false);
+    if (!user) {
+        return (
+            <div className="text-center mt-20">
+                <p className={`${currentThemeColors.primaryText}`}>Загрузка профиля...</p>
+                {feedback.text && <p className="alert-error mt-4">{feedback.text}</p>}
+            </div>
+        );
     }
-  };
+    
+    return (
+        <div className={`max-w-md mx-auto mt-10 p-8 rounded-lg shadow-lg border ${currentThemeColors.secondaryBackground} ${currentThemeColors.bordersDividers}`}>
+            <h2 className={`text-center text-3xl font-bold mb-6 ${currentThemeColors.primaryText}`}>
+                Профиль пользователя
+            </h2>
+            <div className="space-y-6">
+                {/* Email (нередактируемый) */}
+                <div>
+                    <label htmlFor="email" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>Email</label>
+                    <input id="email" type="email" disabled value={user.email} className="standard-input disabled:bg-gray-200 dark:disabled:bg-gray-700" />
+                </div>
+                
+                {/* Редактируемые поля */}
+                <div>
+                    <label htmlFor="firstName" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>Имя</label>
+                    <input id="firstName" name="firstName" type="text" value={editData.firstName || ""} onChange={handleChange} className="standard-input" />
+                </div>
+                
+                <div>
+                    <label htmlFor="lastName" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>Фамилия</label>
+                    <input id="lastName" name="lastName" type="text" value={editData.lastName || ""} onChange={handleChange} className="standard-input" />
+                </div>
 
-  if (error) return <p>{error}</p>;
-  if (!user) return <p>Загрузка...</p>;
+                <div>
+                    <label htmlFor="phone" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>Телефон</label>
+                    <input id="phone" name="phone" type="text" value={editData.phone || ""} onChange={handleChange} className="standard-input" />
+                </div>
 
-  return (
-    <div className={`max-w-sm mx-auto mt-10 space-y-6 p-6 rounded-lg shadow-lg border transition-colors duration-300
-        ${currentThemeColors.secondaryBackground}
-        ${currentThemeColors.bordersDividers}`}>
-      <Typography
-        variant="h4"
-        className={`text-center mb-6 ${currentThemeColors.primaryText}`}
-        {...commonPlaceholderProps}
-      >
-        Профиль
-      </Typography>
-      {/* <p><b>Email:</b> {user.email}</p> */}
-      <Input
-        crossOrigin={undefined} label="email"
-        name="email"
-        type="email"
-        disabled
-        value={user.email}
-        onChange={handleChange}
-        className={`${currentThemeColors.primaryText}`}
-        labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-        containerProps={{ className: "min-w-0" }}
-        {...commonPlaceholderProps}      
-      />
+                <div>
+                    <label htmlFor="address" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>Адрес</label>
+                    <input id="address" name="address" type="text" value={editData.address || ""} onChange={handleChange} className="standard-input" />
+                </div>
 
-      <Input
-        crossOrigin={undefined} label="Имя"
-        name="firstName"
-        type="text"
-        value={editData.firstName || ""}
-        onChange={handleChange}
-        className={`${currentThemeColors.primaryText}`}
-        labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-        containerProps={{ className: "min-w-0" }}
-        {...commonPlaceholderProps}      
-      />
+                {/* Блок для сообщений */}
+                {feedback.text && (
+                    <div className={feedback.type === 'error' ? 'alert-error' : 'alert-success'}>
+                        {feedback.text}
+                    </div>
+                )}
 
-      <Input
-        crossOrigin={undefined} label="Фамилия"
-        name="lastName"
-        type="text"
-        value={editData.lastName || ""}
-        onChange={handleChange}
-        className={`${currentThemeColors.primaryText}`}
-        labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-        containerProps={{ className: "min-w-0" }}
-        {...commonPlaceholderProps}      
-      />
+                {/* Блок с кнопками */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                    <button onClick={handleSave} disabled={isSaving} className={isSaving ? 'inactive-button' : 'primary-button'}>
+                        {isSaving ? "Сохранение..." : "Сохранить"}
+                    </button>
+                    <button onClick={handleLogout} className="secondary-button">
+                        Выйти
+                    </button>
+                </div>
 
-      <Input
-        crossOrigin={undefined} label="Пол"
-        name="sex"
-        type="text"
-        value={editData.sex || ""}
-        onChange={handleChange}
-        className={`${currentThemeColors.primaryText}`}
-        labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-        containerProps={{ className: "min-w-0" }}
-        {...commonPlaceholderProps}      
-      />
-
-      <Input
-        crossOrigin={undefined} label="Телефон"
-        name="phone"
-        type="text"
-        value={editData.phone || ""}
-        onChange={handleChange}
-        className={`${currentThemeColors.primaryText}`}
-        labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-        containerProps={{ className: "min-w-0" }}
-        {...commonPlaceholderProps}      
-      />
-
-      <Input
-        crossOrigin={undefined} label="Адрес"
-        name="address"
-        type="text"
-        value={editData.address || ""}
-        onChange={handleChange}
-        className={`${currentThemeColors.primaryText}`}
-        labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-        containerProps={{ className: "min-w-0" }}
-        {...commonPlaceholderProps}      
-      />
-
-      <div className="flex justify-between gap-2">
-        {user.role === "ADMIN" && 
-          <Button
-            type="submit"
-            fullWidth
-            onClick={() => navigate("/admin-panel")}
-            className={`mt-4 ${currentThemeColors.primaryAccent} hover:shadow-lg ${theme === 'light' ? 'hover:shadow-blue-gray-500/50' : 'hover:shadow-gray-900/50'} transition-shadow duration-300`}
-            {...commonPlaceholderProps}
-          >
-            Админская панель
-          </Button>
-        }
-
-        <Button
-          type="submit"
-          fullWidth
-          onClick={handleSave}
-          disabled={saving}
-          className={`mt-4 ${currentThemeColors.primaryAccent} hover:shadow-lg ${theme === 'light' ? 'hover:shadow-blue-gray-500/50' : 'hover:shadow-gray-900/50'} transition-shadow duration-300`}
-          {...commonPlaceholderProps}
-        >
-          {saving ? "Сохраняю..." : "Сохранить"}
-        </Button>
-
-        <Button
-          type="submit"
-          fullWidth
-          onClick={() => {
-          localStorage.removeItem("access_token");
-          navigate("/login");
-        }}
-          className={`mt-4 ${currentThemeColors.primaryAccent} hover:shadow-lg ${theme === 'light' ? 'hover:shadow-blue-gray-500/50' : 'hover:shadow-gray-900/50'} transition-shadow duration-300`}
-          {...commonPlaceholderProps}
-        >
-          Выйти
-        </Button>
-      </div>
-    </div>
-  );
+                {/* Кнопка для администратора */}
+                {user.role === 'ADMIN' && (
+                    <button onClick={() => navigate("/admin-panel")} className="dark-button mt-4">
+                        Панель администратора
+                    </button>
+                )}
+            </div>
+        </div>
+    );
 }
 
-export default Profile;
+export default ProfilePage;

@@ -37,7 +37,7 @@ export interface Product {
   inStock: boolean;
   category: string;
   imageUrl?: string;
-  suppliers?: { name: string; price: number }[];
+  suppliers?: Supplier[];
   link?: string;
   diameter?: string;
   length?: string;
@@ -46,33 +46,7 @@ export interface Product {
   quantity: number;
 }
 
-// export interface MetalProduct {
-//   id: number;
-//   name: string;
-//   price: number;
-//   inStock: boolean;
-//   diameter: string;
-//   length: string;
-//   grade: string;
-//   category: string;
-//   imageUrl?: string;
-//   colorType: "черный" | "цветной";
-//   suppliers?: { name: string; price: number }[];
-//   quantity: number;
-// }
-
-// export interface Product {
-//   id: number;
-//   name: string;
-//   price: number;
-//   inStock: boolean;
-//   diameter?: string;
-//   length?: string;
-//   grade?: string;
-//   category?: string;
-//   colorType?: "черный" | "цветной";
-//   imageUrl?: string;
-//   suppliers?: { name: string; price: number }[];
-//   quantity: number;
-//   link?: string; // Добавлено для ссылок на страницы товаров
-// }
+export interface Supplier {
+  name: string;
+  price: number;
+}
