@@ -176,7 +176,7 @@ const menuRef = useRef<HTMLDivElement>(null);
           Каталог поставщика: <span className="font-bold uppercase text-accent">{provider}</span>
         </h2>
         <a 
-          href={`${import.meta.env.VITE_API_URL}/parser-${provider}/download`}
+          href={`${import.meta.env.VITE_API_URL}parser-${provider}/download`}
           target="_blank" 
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 bg-accent hover:bg-accent-hover hover:text-black text-black font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"

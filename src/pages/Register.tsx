@@ -1,208 +1,181 @@
 import { useState } from "react";
-import { Button, Input, Typography } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
-import { colors } from "../constants/themeColors";
+import { useTheme } from "@/context/ThemeContext";
+import { colors } from "@/constants/themeColors";
 
-  const commonPlaceholderProps = {
-    placeholder: undefined,
-    onResize: undefined,
-    onResizeCapture: undefined,
-    onPointerEnterCapture: undefined,
-    onPointerLeaveCapture: undefined,
-  };
+// Определяем тип для ошибок формы, чтобы подсвечивать конкретные поля
+type FormErrors = {
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+};
 
-  const themeStyles = {
-    light: { border: 'focus:border-[#D4AF37]' },
-    dark: { border: 'focus:border-[#FFD700]' },
-  };
+function RegisterPage() {
+    const [form, setForm] = useState({
+        email: "",
+        password: "",
+        confirmPassword: ""
+    });
 
-function RegisterFormTest() {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    confirmPassword: ""
-  });
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+    const [feedback, setFeedback] = useState({ text: '', type: '' });
+    const [formErrors, setFormErrors] = useState<FormErrors>({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
-
     const { theme } = useTheme();
     const currentThemeColors = colors[theme];
 
-  const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        // Сбрасываем ошибку для поля, которое пользователь начал редактировать
+        if (formErrors[e.target.name as keyof FormErrors]) {
+            setFormErrors({ ...formErrors, [e.target.name]: undefined });
+        }
+    };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setMessage("");
-    setError('');
-    setSuccess('');
-    setIsLoading(true);
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setFeedback({ text: '', type: '' });
+        setFormErrors({});
+        setIsLoading(true);
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(form.email)) {
-      setError('Введите корректный email.');
-      setIsLoading(false);
-      return;
-    }
+        // --- Блок валидации ---
+        const errors: FormErrors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(form.email)) {
+            errors.email = 'Введите корректный email.';
+        }
+        if (form.password.length < 6) {
+            errors.password = 'Пароль должен содержать минимум 6 символов.';
+        }
+        if (form.password !== form.confirmPassword) {
+            errors.confirmPassword = 'Пароли не совпадают.';
+        }
 
-    if (form.password.length < 6) {
-      setError('Пароль должен содержать минимум 6 символов.');
-      setIsLoading(false);
-      return;
-    }
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            setIsLoading(false);
+            return;
+        }
 
-    if (form.password !== form.confirmPassword) {
-      setError('Пароли не совпадают.');
-      setIsLoading(false);
-      return;
-    }
+        try {
+            const payload = { email: form.email, password: form.password };
+            const res = await fetch(`${import.meta.env.VITE_API_URL}auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            const data = await res.json();
 
-    try {
-      const res = await fetch("http://185.23.34.85:3000/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      setIsLoading(false);
+            if (!res.ok) {
+                throw new Error(data.message || "Ошибка регистрации");
+            }
+            
+            localStorage.setItem("access_token", data.access_token);
+            setFeedback({ text: `Добро пожаловать, ${data.user.email}!`, type: 'success' });
 
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Ошибка регистрации");
-      }
+            setTimeout(() => navigate("/profile"), 1000);
 
-      const data = await res.json();
-      setMessage(`✅ Пользователь создан: ${data.user.email}`);
-      localStorage.setItem("access_token", data.access_token);
-      setMessage("✅ Успешный вход!");
-      navigate("/profile");
-      
-    } catch (err: any) {
-      setMessage(`❌ ${err.message}`);
-    }
-  };
+        } catch (err) {
+            if (err instanceof Error) {
+                setFeedback({ text: `❌ ${err.message}`, type: 'error' });
+            } else {
+                setFeedback({ text: '❌ Произошла неизвестная ошибка', type: 'error' });
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-  return (
-    <div className={`max-w-sm mx-auto mt-10 space-y-6 p-6 rounded-lg shadow-lg border transition-colors duration-300
-        ${currentThemeColors.secondaryBackground}
-        ${currentThemeColors.bordersDividers}`}>
-      <Typography
-        variant="h4"
-        className={`text-center mb-6 ${currentThemeColors.primaryText}`}
-        {...commonPlaceholderProps}
-      >
-        Регистрация
-      </Typography>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          {/* <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: 8 }}
-          /> */}
-          <Input
-            crossOrigin={undefined} label="Email"
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className={`${currentThemeColors.primaryText}`}
-            labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-            containerProps={{ className: "min-w-0" }}
-            {...commonPlaceholderProps}      
-          />
-        {/* <div style={{ marginBottom: 10 }}>
-          <label>Пароль:</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            minLength={6}
-            style={{ width: "100%", padding: 8 }}
-          />
-        </div> */}
-        <Input
-        crossOrigin={undefined} type="password"
-        label="Пароль"
-        name="password"
-        value={form.password}
-        onChange={handleChange}
-        required
-        className={`${currentThemeColors.primaryText} ${themeStyles[theme].border}`}
-        labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-        containerProps={{ className: "min-w-0" }}
-        {...commonPlaceholderProps}      />
-      <Input
-        crossOrigin={undefined} type="password"
-        label="Повторите пароль"
-        name="confirmPassword"
-        value={form.confirmPassword}
-        onChange={handleChange}
-        required
-        className={`${currentThemeColors.primaryText} ${themeStyles[theme].border}`}
-        labelProps={{ className: `${currentThemeColors.secondaryText}` }}
-        containerProps={{ className: "min-w-0" }}
-        {...commonPlaceholderProps}      />
-      {error && (
-        <Typography
-          color="red"
-          className="mb-4 text-center"
-          role="alert"
-          {...commonPlaceholderProps}
+    return (
+        // Используем ваши классы для контейнера формы
+        <div className={`max-w-md mx-auto mt-10 p-8 rounded-lg shadow-lg border 
+            ${currentThemeColors.secondaryBackground} 
+            ${currentThemeColors.bordersDividers}`}
         >
-          {error}
-        </Typography>
-      )}
-      {success && (
-        <Typography
-          color="green"
-          className="mb-4 text-center"
-          role="alert"
-          {...commonPlaceholderProps}
-        >
-          {success}
-        </Typography>
-      )}
-      {message && <p style={{ marginTop: 15 }}>{message}</p>}
-      <Button
-        type="submit"
-        fullWidth
-        disabled={isLoading}
-        className={`mt-4 ${currentThemeColors.primaryAccent} hover:shadow-lg ${theme === 'light' ? 'hover:shadow-blue-gray-500/50' : 'hover:shadow-gray-900/50'} transition-shadow duration-300`}
-        {...commonPlaceholderProps}
-      >
-        {isLoading ? 'Загрузка...' : 'Зарегистрироваться'}
-      </Button>
-      <div className="mt-4 text-center">
-        <Typography
-          variant="small"
-          className={`${currentThemeColors.secondaryText}`}
-          {...commonPlaceholderProps}
-        >
-          Уже есть аккаунт?{" "}
-          <Link
-            to="/login"
-            className={`${currentThemeColors.primaryAccent.includes('text-black') ? 'text-black' : 'text-white'} hover:underline`}
-            style={{ color: theme === 'light' ? '#B36700' : '#FFD700' }}
-          >
-            Войти
-          </Link>
-        </Typography>
+            <h2 className={`text-center text-3xl font-bold mb-6 ${currentThemeColors.primaryText}`}>
+                Регистрация
+            </h2>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Поле Email */}
+                <div>
+                    <label htmlFor="email" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>
+                        Email
+                    </label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        required
+                        // Условно применяем класс для ошибки
+                        className={formErrors.email ? 'error-input' : 'standard-input'}
+                    />
+                    {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
+                </div>
+
+                {/* Поле Пароль */}
+                <div>
+                    <label htmlFor="password" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>
+                        Пароль
+                    </label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        required
+                        className={formErrors.password ? 'error-input' : 'standard-input'}
+                    />
+                    {formErrors.password && <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>}
+                </div>
+
+                {/* Поле Повторите пароль */}
+                <div>
+                    <label htmlFor="confirmPassword" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>
+                        Повторите пароль
+                    </label>
+                    <input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                        required
+                        className={formErrors.confirmPassword ? 'error-input' : 'standard-input'}
+                    />
+                    {formErrors.confirmPassword && <p className="text-red-500 text-sm mt-1">{formErrors.confirmPassword}</p>}
+                </div>
+                
+                {/* Блок для сообщений об успехе или ошибках сервера */}
+                {feedback.text && (
+                    <div className={feedback.type === 'error' ? 'alert-error' : 'alert-success'}>
+                        {feedback.text}
+                    </div>
+                )}
+
+                {/* Кнопка отправки */}
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    // Условно применяем класс для неактивной кнопки
+                    className={isLoading ? 'inactive-button' : 'primary-button'}
+                >
+                    {isLoading ? 'Загрузка...' : 'Зарегистрироваться'}
+                </button>
+
+                <p className={`text-center text-sm ${currentThemeColors.secondaryText}`}>
+                    Уже есть аккаунт?{' '}
+                    <Link to="/login" className="font-medium text-accent hover:underline">
+                        Войти
+                    </Link>
+                </p>
+            </form>
         </div>
-      </form>
-    </div>
-  );
+    );
 }
 
-export default RegisterFormTest;
+export default RegisterPage;

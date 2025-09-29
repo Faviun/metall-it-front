@@ -45,12 +45,16 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
     { key: 'metallotorg', name: 'Металлоторг' },
     { key: 'ktzholding', name: 'КТЗ Холдинг' },
     { key: 'dipos', name: 'Дипос' },
+    { key: 'ntpz', name: 'НТПЗ' },
+    { key: 'evraz', name: 'Евраз' },
+    { key: 'demidov', name: 'Демидов' },
+    { key: 'brokinvest', name: 'Брокинвест' },
   ];
 
   return (
     <header className={`${colors.background} backdrop-blur-md shadow-md py-4 px-6 w-full fixed top-0 left-0 z-50 transition-colors duration-300`}>
       <div className="container mx-auto flex items-center justify-between gap-x-4">
-        <Link to="/" className={`${colors.logoText} text-2xl font-bold whitespace-nowrap`}>
+        <Link to="/" className={`${colors.logoText} text-2xl font-bold whitespace-nowrap hover:text-black`}>
           Металл<span className={colors.accentText}>Маркет</span>
         </Link>
 
@@ -68,15 +72,15 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
           <div className="relative" ref={suppliersMenuRef}>
             <button
               onClick={() => setSuppliersMenuOpen(!isSuppliersMenuOpen)}
-              className={`flex items-center gap-2 px-3 py-1.5 border rounded-lg ${colors.border} ${colors.text} bg-accent hover:bg-accent-hover hover:text-black text-black font-bold transition-colors text-sm`}
+              className={`flex items-center gap-2 px-3 py-1.5 border rounded-md ${colors.border} ${colors.text} bg-accent hover:bg-accent-hover hover:text-black text-black font-bold transition-colors text-sm`}
             >
               Поставщики <i className={`fas fa-chevron-down text-xs transition-transform ${isSuppliersMenuOpen ? 'rotate-180' : ''}`}></i>
             </button>
             {isSuppliersMenuOpen && (
-              <div className={`absolute top-full mt-2 w-52 rounded-lg shadow-lg p-2 ${colors.background} border ${colors.border} z-20`}>
+              <div className="dropdown-list">
                 <ul>
                   {suppliers.map(sup => (
-                    <li key={sup.key}>
+                    <li key={sup.key} >
                       <Link
                         to={`/suppliers/${sup.key}`}
                         onClick={() => setSuppliersMenuOpen(false)}
@@ -112,7 +116,7 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
                 <button onClick={() => {
           localStorage.removeItem("access_token");
           navigate("/login");
-        }} className={`${colors.text} ${colors.linkHover}`}>Выйти</button>
+        }} className={`${colors.text} ${colors.linkHover} bg-transparent`}>Выйти</button>
               </>
             ) : (
               <>
