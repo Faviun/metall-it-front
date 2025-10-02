@@ -68,7 +68,7 @@ export default function AdminMenu({ activeView, setActiveView }: AdminMenuProps)
       <ul className="space-y-2">
         {menuItems.map((item) => (
           <li key={item.id}>
-            {/* 💡 Проверяем наличие subItems. Это и есть исправление. */}
+            {/* Проверяем наличие subItems */}
             {item.subItems ? (
               <>
                 <button

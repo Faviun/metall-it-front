@@ -1,4 +1,4 @@
-// Новый интерфейс для продуктов из API поставщика
+// Интерфейс для продуктов из API поставщика
 export interface ApiProduct {
   id: number;
   provider: string;
@@ -29,7 +29,7 @@ export interface ApiResponse {
   filterProducts: ApiProduct[];
 }
 
-// Этот тип мы будем использовать для отображения в карточках
+// Тип для отображения в карточках
 export interface Product {
   id: number;
   name: string;

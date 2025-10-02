@@ -5,7 +5,6 @@ import Header from "@/features/auth/components/Header";
 import { useTheme } from "@/context/ThemeContext";
 import { colors } from "@/constants/themeColors";
 import ProductSort from "@/features/catalog/components/ProductSort";
-// import $api from "@/api/axios";
 
 const unifiedProductsData = {
   "requestedDate": "2025-09-24",
@@ -983,10 +982,6 @@ interface ApiItem {
   variants: ApiVariant[];
 }
 
-// interface ApiResponse {
-//   items: ApiItem[];
-// }
-
 const mapApiDataToProducts = (apiItems: ApiItem[]): Product[] => {
   return apiItems.map((item, index) => {
     const validPrices = item.variants
@@ -1021,9 +1016,6 @@ const mapApiDataToProducts = (apiItems: ApiItem[]): Product[] => {
   });
 };
 
-// =================================================================================
-// ОСНОВНОЙ КОМПОНЕНТ С ОБНОВЛЕННОЙ ВЕРСТКОЙ
-// =================================================================================
 interface Filters {
   category: string[];
   diameter: string[];
@@ -1035,8 +1027,6 @@ interface Filters {
 type SortOption = "price" | "name" | "stock";
 
 const CatalogPage = () => {
-  // ШАГ 2: Инициализируем состояние сразу, используя данные из константы
-  // Функция-инициализатор в useState выполнится только один раз при первом рендере /const [products, setProducts]
   const [products] = useState<Product[]>(() => mapApiDataToProducts(unifiedProductsData.items));
   
   const [search, setSearch] = useState("");
@@ -1045,9 +1035,6 @@ const CatalogPage = () => {
   
   const { theme } = useTheme();
   const currentColors = colors[theme];
-
-  // ШАГ 3: Удаляем useEffect, который делал запрос к API
-  // useEffect(() => { ... }, []); // Этот блок полностью удален
 
   const filterOptions = useMemo(() => {
     const unique = <T,>(items: T[]) => [...new Set(items)].filter(Boolean);

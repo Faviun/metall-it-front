@@ -222,7 +222,6 @@ const CartPage = () => {
   return (
     <div className="w-full px-4 md:px-6 lg:px-8 mt-16 text-black">
       <h2 className="h2-header">Корзина</h2>
-      {/* <h2 className={`text-2xl font-semibold mb-4 ${currentColors.primaryText}`}>Корзина</h2> */}
       <div className="overflow-x-auto shadow-md rounded-lg border border-gray-300">
         <table className="w-full text-center">
           <thead className="text-xs uppercase bg-blue-gray-100">
@@ -348,7 +347,6 @@ const CartPage = () => {
             <tr className="bg-blue-gray-100 font-bold text-black">
               <td className="py-2 px-4 sticky left-0 z-10 bg-blue-gray-100">Итоговая сумма:</td>
               <td className="py-2 px-4 sticky left-[250px] z-10 bg-blue-gray-100 text-center">
-                {/* Новая ячейка для общей суммы по количеству */}
                 {totalQuantity.toFixed(4).replace(/\.?0+$/, "").replace(/\./g, ",")}
               </td>
               {uniqueSuppliers.map((supplierName) => (

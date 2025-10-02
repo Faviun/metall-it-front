@@ -6,7 +6,6 @@ interface Product {
   name: string;
   price1: number;
   units1: string;
-  // Добавь остальные поля по структуре GetProductsResponseDto
 }
 
 interface DiposParserProps {

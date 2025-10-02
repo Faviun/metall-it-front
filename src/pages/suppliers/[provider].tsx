@@ -29,7 +29,6 @@ const { theme } = useTheme();
 const c = colors[theme];
 const menuRef = useRef<HTMLDivElement>(null);
 
-  // ... (useEffect для загрузки данных и закрытия меню) ...
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -74,7 +73,6 @@ const menuRef = useRef<HTMLDivElement>(null);
     });
   }, [products, appliedFilters]);
 
-  // --- ЛОГИКА ДЛЯ ФИЛЬТРОВ ---
   const handleTempFilterChange = (filterType: keyof typeof tempFilters, value: string) => {
     setTempFilters(prev => {
       const currentValues = prev[filterType];
@@ -123,7 +121,6 @@ const menuRef = useRef<HTMLDivElement>(null);
   };
 
   const hasActiveFilters = Object.values(appliedFilters).some(arr => arr.length > 0);
-  // --- КОНЕЦ ЛОГИКИ ---
 
   const renderFilterMenu = (
     title: string,
@@ -137,7 +134,6 @@ const menuRef = useRef<HTMLDivElement>(null);
       {openFilter === filterKey && (
         <div className={`absolute top-full mt-2 w-56 p-2 rounded-md shadow-lg ${c.secondaryBackground} border ${c.bordersDividers} z-20`}>
           <ul className="max-h-60 overflow-y-auto">
-            {/* --- "ВЫБРАТЬ ВСЕ" --- */}
             <li className={`hover:bg-light-border dark:hover:bg-dark-border rounded-md  ${c.bordersDividers}`}>
                 <label className="flex items-center gap-2 p-2 cursor-pointer w-full">
                     <input type="checkbox"
@@ -185,7 +181,6 @@ const menuRef = useRef<HTMLDivElement>(null);
         </a>
       </div>
       
-      {/* --- БЛОК ОТОБРАЖЕНИЯ ФИЛЬТРОВ --- */}
       {hasActiveFilters && (
         <div className={`mb-4 p-4 rounded-lg border ${c.bordersDividers}`}>
           <div className="flex justify-between items-center">

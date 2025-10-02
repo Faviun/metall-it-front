@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // useParams,
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTheme } from "@/context/ThemeContext";
 import { colors } from "@/constants/themeColors";
 
-function SetPasswordPage() {
-    // useParams() извлекает динамическую часть из URL (:token)
-    // const { token } = useParams<{ token: string }>();
-    const token = "test-token-123"; 
+function SetPasswordPage() { 
     const navigate = useNavigate();
+
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get('token');
 
     const [form, setForm] = useState({
         password: "",
@@ -27,10 +27,9 @@ function SetPasswordPage() {
     }, [token, navigate]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+            setForm({ ...form, [e.target.name]: e.target.value });
+        };
+        const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setFeedback({ text: '', type: '' });
         setIsLoading(true);
@@ -47,55 +46,36 @@ function SetPasswordPage() {
             return;
         }
 
-        // try {
-        //     const payload = {
-        //         token: token,
-        //         password: form.password,
-        //     };
+        try {
+            const payload = {
+                token: token,
+                password: form.password,
+            };
 
-        //     const res = await fetch(`${import.meta.env.VITE_API_URL}auth/set-password`, {
-        //         method: "POST",
-        //         headers: { "Content-Type": "application/json" },
-        //         body: JSON.stringify(payload),
-        //     });
+            const res = await fetch(`${import.meta.env.VITE_API_URL}auth/set-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || "Ошибка: не удалось установить пароль. Возможно, ссылка устарела.");
+            }
+            
+            setFeedback({ text: "✅ Пароль успешно установлен! Сейчас вы будете перенаправлены на страницу входа.", type: 'success' });
 
-        //     const data = await res.json();
-        //     if (!res.ok) {
-        //         throw new Error(data.message || "Ошибка: не удалось установить пароль. Возможно, ссылка устарела.");
-        //     }
+            setTimeout(() => {
+                navigate("/login");
+            }, 2000);
 
-        //     setFeedback({ text: "✅ Пароль успешно установлен! Сейчас вы будете перенаправлены на страницу входа.", type: 'success' });
-
-        //     setTimeout(() => {
-        //         navigate("/login");
-        //     }, 2000);
-
-        // } catch (err) {
-        //     if (err instanceof Error) {
-        //         setFeedback({ text: `❌ ${err.message}`, type: 'error' });
-        //     }
-        // } finally {
-        //     setIsLoading(false);
-        // }
-    console.log("Симуляция отправки данных:", { token, password: form.password });
-
-    // Симулируем задержку ответа от сервера в 1.5 секунды
-    setTimeout(() => {
-        // --- Чтобы проверить сценарий УСПЕХА, используйте этот блок ---
-        setFeedback({ text: "✅ Пароль успешно установлен! (симуляция)", type: 'success' });
-        setTimeout(() => navigate("/login"), 2000);
-
-        /*
-        // --- А чтобы проверить сценарий ОШИБКИ, используйте этот ---
-        setFeedback({ 
-            text: "❌ Ошибка: ссылка устарела или недействительна (симуляция)", 
-            type: 'error' 
-        });
-        */
-
-        setIsLoading(false);
-    }, 1500);
-
+        } catch (err) {
+            if (err instanceof Error) {
+                setFeedback({ text: `❌ ${err.message}`, type: 'error' });
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

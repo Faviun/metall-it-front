@@ -22,7 +22,6 @@ function isMyAxiosError<T = any>(payload: any): payload is MyAxiosError<T> {
 
 const $api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  // baseURL: import.meta.env.VITE_BACKEND_URL,
   headers: {
     'Content-Type': 'application/json',
   },

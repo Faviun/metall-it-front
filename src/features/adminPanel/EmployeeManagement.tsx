@@ -1,7 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import apiFetch from '@/utils/api';
+import { Link } from 'react-router-dom'; 
+import ConfirmationModal from '@/components/common/ConfirmationModal';
+import { useRoles } from '@/context/RolesContext';
 
-// Тип для объекта сотрудника, который мы будем получать с бэкенда
+interface EmployeeManagementProps {
+    mode: 'employees' | 'customers';
+}
+
 interface Employee {
     id: number;
     firstName: string;
@@ -11,60 +17,46 @@ interface Employee {
         name: string;
         description: string;
     };
+    // role: string;
 }
 
-// Временные данные, пока бэкенд в разработке
-const MOCK_EMPLOYEES: Employee[] = [
-    { id: 1, firstName: 'Иван', lastName: 'Админов', email: 'admin@example.com', role: { name: 'ADMIN', description: 'Администратор' } },
-    { id: 2, firstName: 'Елена', lastName: 'Менеджерова', email: 'manager@example.com', role: { name: 'SALES_MANAGER', description: 'Менеджер по продажам' } },
-];
-
-// ... (словарь EMPLOYEE_ROLES_MAP остается без изменений)
-const EMPLOYEE_ROLES_MAP: { [key: string]: string } = {
-    'MANAGER': 'Менеджер',
-    'LOGIST': 'Логист',
-    'ACCOUNTANT': 'Бухгалтер',
-    'SUPPLY_MANAGER': 'Снабженеец',
-};
-const EMPLOYEE_ROLE_KEYS = Object.keys(EMPLOYEE_ROLES_MAP);
-
-
-function EmployeeManagement() {
-    // Состояние для формы
-    const [form, setForm] = useState({ email: '', firstName: '', lastName: '', role: 'MANAGER' });
+function EmployeeManagement({ mode }: EmployeeManagementProps) {
+    const [form, setForm] = useState({ email: '', firstName: '', lastName: '', role: '' });
     const [isFormLoading, setIsFormLoading] = useState(false);
     const [feedback, setFeedback] = useState({ text: '', type: '' });
-    
-    // ✨ Новые состояния
-    const [isFormVisible, setIsFormVisible] = useState(false); // Видимость формы
-    const [employees, setEmployees] = useState<Employee[]>([]); // Список сотрудников
-    const [isListLoading, setIsListLoading] = useState(true); // Загрузка списка
+    const [isFormVisible, setIsFormVisible] = useState(false);
+    const [allUsers, setAllUsers] = useState<Employee[]>([]);
+    const [isListLoading, setIsListLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState<Employee | null>(null);
+    const { roles, getRoleDescription, isLoading: areRolesLoading } = useRoles();
 
-    // Загрузка списка сотрудников при монтировании компонента
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            setIsListLoading(true);
-            try {
-                // Когда бэкенд будет готов, эта строка заработает
-                // const data = await apiFetch(`${import.meta.env.VITE_API_URL}admin/users`);
-                // setEmployees(data);
-
-                // А пока используем заглушку с задержкой
-                setTimeout(() => {
-                    setEmployees(MOCK_EMPLOYEES);
-                    setIsListLoading(false);
-                }, 1000);
-
-            } catch (err) {
-                // Обработка ошибки загрузки списка
-                setIsListLoading(false);
-            }
-        };
-
-        fetchEmployees();
+    const fetchUsers = useCallback(async () => {
+        setIsListLoading(true);
+        try {
+            const data = await apiFetch(`${import.meta.env.VITE_API_URL}users`);
+            setAllUsers(data);
+        } catch (err) {
+            console.error("Ошибка при загрузке списка пользователей:", err);
+        } finally {
+            setIsListLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
+
+    useEffect(() => {
+        if (!areRolesLoading && roles.length > 0) {
+            // Устанавливаем первую роль из списка (кроме USER) как роль по умолчанию
+            const defaultRole = roles.find(r => r.name !== 'USER');
+            if (defaultRole) {
+                setForm(prev => ({ ...prev, role: defaultRole.name }));
+            }
+        }
+    }, [roles, areRolesLoading]);
     
-    // ... (функции handleChange и handleSubmit остаются без изменений)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -74,14 +66,21 @@ function EmployeeManagement() {
         setIsFormLoading(true);
         setFeedback({ text: '', type: '' });
         try {
-            const response = await apiFetch(`${import.meta.env.VITE_API_URL}admin/users`, {
+            const payload = {
+                email: form.email,
+                firstname: form.firstName,
+                lastname: form.lastName,
+                role: form.role
+            };
+            await apiFetch(`${import.meta.env.VITE_API_URL}auth/invite`, {
                 method: 'POST',
-                body: JSON.stringify(form),
+                body: JSON.stringify(payload),
             });
-            setFeedback({ text: `✅ ${response.message}`, type: 'success' });
-            setForm({ email: '', firstName: '', lastName: '', role: 'MANAGER' });
-            setIsFormVisible(false); // Скрываем форму после успеха
-            // Тут нужно будет обновить список сотрудников
+            setFeedback({ text: `✅ Приглашение успешно отправлено!`, type: 'success' });
+            const defaultRole = roles.find(r => r.name !== 'USER');
+            setForm({ email: '', firstName: '', lastName: '', role: defaultRole ? defaultRole.name : '' });
+            setIsFormVisible(false);
+            setTimeout(() => fetchUsers(), 1000);
         } catch (err) {
             if (err instanceof Error) {
                 setFeedback({ text: `❌ ${err.message}`, type: 'error' });
@@ -91,23 +90,57 @@ function EmployeeManagement() {
         }
     };
 
+    const handleOpenDeleteModal = (user: Employee) => {
+        setUserToDelete(user);
+        setIsModalOpen(true);
+    };
+    
+
+    const handleConfirmDelete = async () => {
+        if (!userToDelete) return;
+
+        try {
+            await apiFetch(`${import.meta.env.VITE_API_URL}users/${userToDelete.id}`, {
+                method: 'DELETE',
+            });
+            setAllUsers(prev => prev.filter(emp => emp.id !== userToDelete.id));
+        } catch (err) {
+            console.error("Ошибка при удалении пользователя:", err);
+        } finally {
+            setIsModalOpen(false);
+            setUserToDelete(null);
+        }
+    };
+
+    const employeeRolesForSelect = roles.filter(role => role.name !== 'USER');
+
+
+    const filteredUsers = allUsers.filter(user => {
+        if (mode === 'employees') {
+            return user.role?.name !== 'USER'; // Показываем всех, КРОМЕ 'USER'
+        } else { // mode === 'customers'
+            return user.role?.name === 'USER'; // Показываем ТОЛЬКО 'USER'
+        }
+    });
+
+    const title = mode === 'employees' ? 'Управление сотрудниками' : 'Управление пользователями';
+    const listTitle = mode === 'employees' ? 'Список сотрудников' : 'Список пользователей';
 
     return (
         <div className="w-full space-y-6">
             <div className="flex justify-between items-center">
-                <h3 className="h3-header">Управление сотрудниками</h3>
-                {/* ✨ Кнопка для переключения видимости формы */}
-                <button onClick={() => setIsFormVisible(!isFormVisible)} className="primary-button w-auto">
-                    {isFormVisible ? 'Скрыть форму' : 'Добавить сотрудника'}
-                </button>
+                <h3 className="h3-header">{title}</h3>
+                {mode === 'employees' && (
+                    <button onClick={() => setIsFormVisible(!isFormVisible)} className="primary-button w-auto">
+                        {isFormVisible ? 'Скрыть форму' : 'Добавить сотрудника'}
+                    </button>
+                )}
             </div>
             
-            {/* ✨ Форма добавления теперь показывается по условию */}
-            {isFormVisible && (
+            {isFormVisible && mode === 'employees' && (
                 <div className="bg-light-card dark:bg-dark-card p-6 rounded-lg shadow-md border border-light-border dark:border-dark-border">
                     <h4 className="text-xl font-bold mb-4 text-light-text dark:text-dark-text">Добавить нового сотрудника</h4>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* ... код формы без изменений ... */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="firstName" className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Имя</label>
@@ -124,12 +157,16 @@ function EmployeeManagement() {
                     </div>
                     <div>
                         <label htmlFor="role" className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Роль</label>
-                        <select name="role" value={form.role} onChange={handleChange} className="select w-full">
-                            {EMPLOYEE_ROLE_KEYS.map(roleKey => (
-                                <option key={roleKey} value={roleKey}>
-                                    {EMPLOYEE_ROLES_MAP[roleKey]} 
-                                </option>
-                            ))}
+                        <select name="role" value={form.role} onChange={handleChange} disabled={areRolesLoading} className="select w-full">
+                            {areRolesLoading ? (
+                                <option>Загрузка ролей...</option>
+                            ) : (
+                                employeeRolesForSelect.map(role => (
+                                    <option key={role.name} value={role.name}>
+                                        {role.description}
+                                    </option>
+                                ))
+                            )}
                         </select>
                     </div>
 
@@ -146,9 +183,8 @@ function EmployeeManagement() {
                 </div>
             )}
             
-            {/* ✨ Новый блок для отображения списка сотрудников */}
             <div className="bg-light-card dark:bg-dark-card p-6 rounded-lg shadow-md border border-light-border dark:border-dark-border">
-                <h4 className="text-xl font-bold mb-4 text-light-text dark:text-dark-text">Список сотрудников</h4>
+                <h4 className="text-xl font-bold mb-4 text-light-text dark:text-dark-text">{listTitle}</h4>
                 {isListLoading ? (
                     <p className="text-gray-500 dark:text-gray-400">Загрузка списка...</p>
                 ) : (
@@ -160,15 +196,26 @@ function EmployeeManagement() {
                                     <th className="p-2">Имя</th>
                                     <th className="p-2">Email</th>
                                     <th className="p-2">Роль</th>
+                                    <th className="p-2 text-right">Действия</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {employees.map(emp => (
-                                    <tr key={emp.id} className="border-b border-light-border dark:border-dark-border last:border-b-0">
+                                {filteredUsers.map(emp => (
+                                    <tr key={emp.id} className="border-b border-light-border dark:border-dark-border last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-800">
                                         <td className="p-2">{emp.id}</td>
                                         <td className="p-2">{emp.firstName} {emp.lastName}</td>
                                         <td className="p-2">{emp.email}</td>
-                                        <td className="p-2">{emp.role.description}</td>
+                                        <td className="p-2">{getRoleDescription(emp.role.name)}</td>
+                                        <td className="p-2 text-right">
+                                            <div className="flex justify-end gap-4">
+                                                <Link to={`/admin-panel/users/${emp.id}`} className="primary-button w-auto text-center">
+                                                    Редактировать
+                                                </Link>
+                                                <button onClick={() => handleOpenDeleteModal(emp)} className="secondary-button">
+                                                    Удалить
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -176,7 +223,16 @@ function EmployeeManagement() {
                     </div>
                 )}
             </div>
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                title="Подтверждение удаления"
+                message={`Вы уверены, что хотите удалить пользователя ${userToDelete?.firstName} ${userToDelete?.lastName}? Это действие необратимо.`}
+                onConfirm={handleConfirmDelete}
+                onClose={() => setIsModalOpen(false)}
+                confirmText="Да, удалить"
+            />
         </div>
+        
     );
 }
 
