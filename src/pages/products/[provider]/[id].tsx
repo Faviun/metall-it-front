@@ -85,7 +85,6 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </div>
-      {/* --- И УСЛОВНЫЙ РЕНДЕР МОДАЛЬНОГО ОКНА --- */}
       {isModalOpen && (
         <AddToCartModal
           product={product}

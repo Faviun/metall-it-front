@@ -56,15 +56,11 @@ export const CartProvider = ({ children, onCheckoutSuccess }: CartProviderProps)
 
     loadedItems = loadedItems.map(item => {
       if (item.availableSuppliers && item.availableSuppliers.length > 0) {
-        // Находим поставщика с наименьшей ценой
-        const cheapestSupplier = item.availableSuppliers.reduce((minSupplier, currentSupplier) => {
-          return (currentSupplier.price < minSupplier.price) ? currentSupplier : minSupplier;
-        }, item.availableSuppliers[0]);
-
-        // Если текущий selectedSupplierName отсутствует или не является самым дешевым,
-        // или если он равен 'undefined' (после загрузки из localStorage, если не было выбрано)
-        // то устанавливаем его на самого дешевого поставщика
-        if (!item.selectedSupplierName || item.selectedSupplierName !== cheapestSupplier.name) {
+        // Выбираем самого дешевого, только если поставщик еще не выбран
+        if (!item.selectedSupplierName) {
+          const cheapestSupplier = item.availableSuppliers.reduce((min, current) => 
+            (current.price < min.price) ? current : min
+          );
           return { ...item, selectedSupplierName: cheapestSupplier.name };
         }
       }
@@ -91,23 +87,18 @@ export const CartProvider = ({ children, onCheckoutSuccess }: CartProviderProps)
 
   const addToCart = (product: CartItem) => {
     setItems((prevItems) => {
-      const existingItemIndex = prevItems.findIndex(
+      // Ищем товар в корзине только по его ID
+      const existingItem = prevItems.find(
         (item) => item.id === product.id
-        // При добавлении нового товара, мы его добавляем отдельно, даже если ID совпадает,
-        // если нет выбранного поставщика.
-        // Если же поставщик уже выбран (например, при повторном добавлении той же позиции),
-        // то проверяем по ID и выбранному поставщику.
-        && item.selectedSupplierName === product.selectedSupplierName
       );
 
-      if (existingItemIndex > -1) {
-        // Если товар найден, обновляем его количество
-        const newItems = [...prevItems];
-        newItems[existingItemIndex] = {
-          ...newItems[existingItemIndex],
-          quantity: newItems[existingItemIndex].quantity + product.quantity,
-        };
-        return newItems;
+      if (existingItem) {
+        // Если товар найден, просто обновляем его количество
+        return prevItems.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + product.quantity }
+            : item
+        );
       }
 
       let itemToAdd = { ...product };
@@ -199,7 +190,6 @@ export const CartProvider = ({ children, onCheckoutSuccess }: CartProviderProps)
 
     setOrders((prevOrders) => [...prevOrders, newOrder]);
     clearCart(); // Очищаем корзину после оформления заказа
-    // alert("Заказ успешно оформлен!");
     onCheckoutSuccess(); // <-- Вызываем переданную функцию для навигации
   };
 

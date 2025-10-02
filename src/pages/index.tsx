@@ -3,13 +3,11 @@ import { Link } from 'react-router-dom';
 import CategoryCard from '@/features/home/CategoryCard';
 import ProductCard from '@/features/catalog/components/ProductCard';
 import TestimonialCard from '@/features/home/TestimonialCard';
-import type { Product } from '@/features/auth/types'; // Используем актуальный тип Product
+import type { Product } from '@/features/auth/types';
 import MetalCalculator from '@/features/home/MetalCalculator';
 import { useTheme } from '@/context/ThemeContext';
 import { colors } from '@/constants/themeColors';
 
-
-// Убедимся, что данные соответствуют типу Product
 const featuredProducts: Product[] = [
     { id: 1, name: "Арматура ф10 А500С", price: 57000, inStock: true, diameter: "12 мм", length: "11.7 м", grade: "ГОСТ 5781-82", category: "Арматура", colorType: "черный", imageUrl: "https://soling-n.ru/UserFiles/Image/img3_10149.jpg", suppliers: [ { name: "Поставщик 1", price: 57000 }, { name: "Поставщик 2", price: 57500 }, ], quantity: 0, },
     { id: 3, name: "Круг 20 мм", price: 49000, inStock: true, diameter: "20 мм", length: "6 м", grade: "ГОСТ 2590-2006", category: "Круг", colorType: "черный", imageUrl: "https://ustinovka46.ru/images/virtuemart/product/21e43265-2ca6-4c36-9936-30130c6535b5.jpg", suppliers: [ { name: "Поставщик 2", price: 49500 }, { name: "Поставщик 3", price: 49000 }, ], quantity: 0, },
@@ -57,8 +55,6 @@ const suppliers: Supplier[] = [
   { name: "Брокинвест", logoUrl: "https://www.brokinvest.ru/_next/static/media/Preloader_1.cf437bdb.svg", inversion: 'none' },
 ];
 
-
-    // Дублируем массив для создания эффекта бесконечной прокрутки
     const duplicatedSuppliers = [...suppliers, ...suppliers];
 
     return (
@@ -95,7 +91,6 @@ const suppliers: Supplier[] = [
                             </div>
                         ))}
                     </div>
-                    {/* Градиент для плавного исчезновения */}
                     <div className={`absolute top-0 left-0 w-16 h-full bg-gradient-to-r from-[${theme === 'light' ? '#F8FAFC' : '#1A2A40'}] to-transparent`}></div>
                     <div className={`absolute top-0 right-0 w-16 h-full bg-gradient-to-l from-[${theme === 'light' ? '#F8FAFC' : '#1A2A40'}] to-transparent`}></div>
                 </div>

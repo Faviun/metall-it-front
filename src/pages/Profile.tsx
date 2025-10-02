@@ -12,7 +12,10 @@ interface UserProfile {
     phone: string | null;
     address: string | null;
     sex: string | null;
-    role: 'USER' | 'ADMIN';
+    role: {
+        name: string;
+        description: string;
+    };
 }
 
 function ProfilePage() {
@@ -131,7 +134,7 @@ function ProfilePage() {
                 </div>
 
                 {/* Кнопка для администратора */}
-                {user.role === 'ADMIN' && (
+                {user.role?.name === 'ADMIN' && (
                     <button onClick={() => navigate("/admin-panel")} className="dark-button mt-4">
                         Панель администратора
                     </button>

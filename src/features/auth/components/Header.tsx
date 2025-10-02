@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-// import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { useTheme } from "@/context/ThemeContext";
 import { headerColors } from "@/constants/themeColors";
@@ -12,7 +11,6 @@ interface HeaderProps {
 }
 
 function Header({ onSearchChange, searchValue }: HeaderProps) {
-  // const { isAuthenticated, logout } = useAuth();
   const { items } = useCart();
   const { theme } = useTheme();
   
@@ -49,6 +47,7 @@ function Header({ onSearchChange, searchValue }: HeaderProps) {
     { key: 'evraz', name: 'Евраз' },
     { key: 'demidov', name: 'Демидов' },
     { key: 'brokinvest', name: 'Брокинвест' },
+    { key: 'ag', name: 'А ГРУПП Маркет' },
   ];
 
   return (

@@ -1,7 +1,7 @@
 import React, { Component, type ErrorInfo, type ReactNode } from 'react';
 import { Typography, Button } from '@material-tailwind/react';
-import { useTheme } from '../context/ThemeContext';
-import { colors } from '../constants/themeColors';
+import { useTheme } from '@/context/ThemeContext';
+import { colors } from '@/constants/themeColors';
 
 interface ErrorBoundaryProps {
   children: ReactNode;

@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/context/ThemeContext";
 import { colors } from "@/constants/themeColors";
 
-// Определяем тип для ошибок формы, чтобы подсвечивать конкретные поля
 type FormErrors = {
     email?: string;
     password?: string;
@@ -27,7 +26,6 @@ function RegisterPage() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
-        // Сбрасываем ошибку для поля, которое пользователь начал редактировать
         if (formErrors[e.target.name as keyof FormErrors]) {
             setFormErrors({ ...formErrors, [e.target.name]: undefined });
         }
@@ -39,7 +37,6 @@ function RegisterPage() {
         setFormErrors({});
         setIsLoading(true);
 
-        // --- Блок валидации ---
         const errors: FormErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(form.email)) {
@@ -88,7 +85,6 @@ function RegisterPage() {
     };
 
     return (
-        // Используем ваши классы для контейнера формы
         <div className={`max-w-md mx-auto mt-10 p-8 rounded-lg shadow-lg border 
             ${currentThemeColors.secondaryBackground} 
             ${currentThemeColors.bordersDividers}`}
@@ -98,7 +94,6 @@ function RegisterPage() {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Поле Email */}
                 <div>
                     <label htmlFor="email" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>
                         Email
@@ -110,13 +105,11 @@ function RegisterPage() {
                         value={form.email}
                         onChange={handleChange}
                         required
-                        // Условно применяем класс для ошибки
                         className={formErrors.email ? 'error-input' : 'standard-input'}
                     />
                     {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
                 </div>
 
-                {/* Поле Пароль */}
                 <div>
                     <label htmlFor="password" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>
                         Пароль
@@ -133,7 +126,6 @@ function RegisterPage() {
                     {formErrors.password && <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>}
                 </div>
 
-                {/* Поле Повторите пароль */}
                 <div>
                     <label htmlFor="confirmPassword" className={`block text-sm font-medium mb-1 ${currentThemeColors.secondaryText}`}>
                         Повторите пароль
@@ -150,18 +142,15 @@ function RegisterPage() {
                     {formErrors.confirmPassword && <p className="text-red-500 text-sm mt-1">{formErrors.confirmPassword}</p>}
                 </div>
                 
-                {/* Блок для сообщений об успехе или ошибках сервера */}
                 {feedback.text && (
                     <div className={feedback.type === 'error' ? 'alert-error' : 'alert-success'}>
                         {feedback.text}
                     </div>
                 )}
 
-                {/* Кнопка отправки */}
                 <button
                     type="submit"
                     disabled={isLoading}
-                    // Условно применяем класс для неактивной кнопки
                     className={isLoading ? 'inactive-button' : 'primary-button'}
                 >
                     {isLoading ? 'Загрузка...' : 'Зарегистрироваться'}

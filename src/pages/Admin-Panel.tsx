@@ -44,16 +44,17 @@ export default function AdminPanel() {
               </div>
               <UnificTable />
             </div>
-            {/* Старый контент правой колонки */}
             <ParserTable />
           </>
         );
-      // Заглушки для других разделов
       case 'employees':
-            return <EmployeeManagement />;
+            return <EmployeeManagement mode="employees" />;
+        
+        case 'users':
+            return <EmployeeManagement mode="customers" />;
+            
       case 'nomenclature':
         return <div className="w-full bg-white p-6 rounded-lg shadow-md"><h2>Номенклатура</h2><p>Здесь будет управление номенклатурой.</p></div>;
-      // ... и так далее для всех пунктов
       default:
         return <div className="w-full bg-white p-6 rounded-lg shadow-md"><h2>{activeView}</h2><p>Раздел в разработке.</p></div>;
     }
@@ -64,9 +65,7 @@ export default function AdminPanel() {
     <div className="flex flex-col w-full bg-gray-100 px-[100px] py-[50px] gap-8">
       <h2 className="h2-header">Панель администратора</h2>
       <div className="flex w-full gap-10 items-start">
-        {/* Левая колонка теперь - меню */}
         <AdminMenu activeView={activeView} setActiveView={setActiveView} />
-        {/* Правая, основная часть, отображает контент в зависимости от выбора в меню */}
         <div className="flex flex-grow gap-10">
           {renderActiveView()}
         </div>

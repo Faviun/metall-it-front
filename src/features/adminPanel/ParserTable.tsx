@@ -43,7 +43,6 @@ const updateParams = (key: string, value: string) => {
     params.delete(key);
   }
 
-  // 🔥 фикс: чтобы limit всегда сохранялся
   if (!params.get("limit")) {
     params.set("limit", String(limit));
   }

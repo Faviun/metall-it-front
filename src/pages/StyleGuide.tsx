@@ -3,7 +3,7 @@ import { colors } from '@/constants/themeColors';
 
 const StyleGuidePage = () => {
   const { theme } = useTheme();
-  const c = colors[theme]; // Короткий псевдоним для удобства
+  const c = colors[theme];
 
   return (
     <div className={`font-sans ${c.primaryBackground} ${c.primaryText}`}>

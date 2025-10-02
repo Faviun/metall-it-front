@@ -6,14 +6,10 @@ import { colors } from "@/constants/themeColors";
 function LoginPage() {
     const [form, setForm] = useState({ email: "", password: "" });
     const [isLoading, setIsLoading] = useState(false);
-    // ✨ Используем единое состояние для всех сообщений
     const [feedback, setFeedback] = useState({ text: '', type: '' });
     const navigate = useNavigate();
-
     const { theme } = useTheme();
     const currentThemeColors = colors[theme];
-
-    // ✨ Добавляем строгую типизацию
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -21,7 +17,7 @@ function LoginPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setFeedback({ text: '', type: '' });
-        setIsLoading(true); // ✨ Устанавливаем состояние загрузки
+        setIsLoading(true);
 
         if (!form.email || !form.password) {
             setFeedback({ text: 'Пожалуйста, введите email и пароль.', type: 'error' });
@@ -30,8 +26,6 @@ function LoginPage() {
         }
 
         try {
-            // ✨ Используем apiFetch вместо стандартного fetch
-            // Обратите внимание, что здесь токен не нужен, поэтому мы делаем "публичный" запрос
             const res = await fetch(`${import.meta.env.VITE_API_URL}auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -81,7 +75,7 @@ function LoginPage() {
                         value={form.email}
                         onChange={handleChange}
                         required
-                        className="standard-input" // ✨ Используем ваш класс для инпута
+                        className="standard-input"
                     />
                 </div>
                 <div>
@@ -95,7 +89,7 @@ function LoginPage() {
                         value={form.password}
                         onChange={handleChange}
                         required
-                        className="standard-input" // ✨ Используем ваш класс для инпута
+                        className="standard-input"
                     />
                 </div>
                 
@@ -108,7 +102,7 @@ function LoginPage() {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className={isLoading ? 'inactive-button' : 'primary-button'} // ✨ Используем ваши классы для кнопки
+                    className={isLoading ? 'inactive-button' : 'primary-button'}
                 >
                     {isLoading ? 'Вход...' : 'Войти'}
                 </button>
