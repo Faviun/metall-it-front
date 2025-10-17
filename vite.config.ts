@@ -5,6 +5,10 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react(), Pages()],
+  server: {
+    host: "0.0.0.0", // важно
+    port: process.env.PORT ? Number(process.env.PORT) : 5173,
+  },
   preview: {
     host: true, // или 0.0.0.0
     port: process.env.PORT ? Number(process.env.PORT) : 4173,
